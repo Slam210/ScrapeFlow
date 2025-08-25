@@ -6,12 +6,26 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Wrapper around Radix UI's ContextMenu Root that injects a data-slot and forwards props.
+ *
+ * Renders ContextMenuPrimitive.Root with a fixed `data-slot="context-menu"` and passes all received props through to the underlying Radix primitive.
+ *
+ * @returns The Radix ContextMenu root element.
+ */
 function ContextMenu({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Root>) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
 }
 
+/**
+ * Wrapper for Radix's ContextMenu Trigger that forwards props and adds a `data-slot`.
+ *
+ * Renders a ContextMenu trigger element with the `data-slot="context-menu-trigger"` attribute and forwards all received props to the underlying Radix Primitive.
+ *
+ * @returns The rendered ContextMenu trigger element.
+ */
 function ContextMenuTrigger({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
@@ -20,6 +34,11 @@ function ContextMenuTrigger({
   )
 }
 
+/**
+ * Wrapper around Radix ContextMenu Group that forwards all props and adds a `data-slot="context-menu-group"` attribute.
+ *
+ * This component renders ContextMenuPrimitive.Group and is intended to provide a consistent data-slot hook for styling and integration.
+ */
 function ContextMenuGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Group>) {
@@ -28,6 +47,13 @@ function ContextMenuGroup({
   )
 }
 
+/**
+ * ContextMenu Portal wrapper that injects a standardized `data-slot` attribute and forwards all props.
+ *
+ * Renders Radix's `ContextMenuPrimitive.Portal` with `data-slot="context-menu-portal"`.
+ *
+ * @returns The portal element for context menu content.
+ */
 function ContextMenuPortal({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) {
@@ -36,12 +62,27 @@ function ContextMenuPortal({
   )
 }
 
+/**
+ * Wrapper around Radix ContextMenu.Sub that injects a standardized data-slot attribute.
+ *
+ * Renders ContextMenuPrimitive.Sub with data-slot="context-menu-sub" and forwards all received props.
+ *
+ * @returns The rendered ContextMenu Sub element.
+ */
 function ContextMenuSub({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Sub>) {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />
 }
 
+/**
+ * Wrapper around Radix UI's RadioGroup primitive for context menus.
+ *
+ * Renders a ContextMenu RadioGroup with a standardized `data-slot="context-menu-radio-group"`
+ * attribute and forwards all props to the underlying Radix primitive.
+ *
+ * @returns A JSX element for a context-menu radio group.
+ */
 function ContextMenuRadioGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.RadioGroup>) {
@@ -53,6 +94,16 @@ function ContextMenuRadioGroup({
   )
 }
 
+/**
+ * A styled wrapper for Radix's SubTrigger used to open a submenu.
+ *
+ * Renders a SubTrigger with standardized data-slot/data-inset attributes, merged styling, optional inset padding, and an appended right-chevron icon.
+ *
+ * @param className - Additional CSS classes appended to the component's default classes.
+ * @param inset - When true, applies inset styling (adds left padding) and sets `data-inset` for styling hooks.
+ * @param children - Content displayed inside the trigger.
+ * @returns A JSX element rendering a styled submenu trigger.
+ */
 function ContextMenuSubTrigger({
   className,
   inset,
@@ -77,6 +128,13 @@ function ContextMenuSubTrigger({
   )
 }
 
+/**
+ * Styled wrapper around Radix's ContextMenu.SubContent that renders submenu content within the context menu.
+ *
+ * Adds a data-slot attribute ("context-menu-sub-content"), default styling (appearance, size, animations, positioning, and overflow handling), and forwards all received props to the underlying Radix primitive.
+ *
+ * @returns A React element rendering the styled ContextMenu SubContent.
+ */
 function ContextMenuSubContent({
   className,
   ...props
@@ -93,6 +151,15 @@ function ContextMenuSubContent({
   )
 }
 
+/**
+ * Renders the context menu content inside a Portal with standardized styling and data attributes.
+ *
+ * The component wraps Radix's `ContextMenuPrimitive.Content` in a `Portal`, applies a `data-slot="context-menu-content"`
+ * attribute, merges built-in utility classes (animations, layout, sizing, overflow, and appearance) with an optional
+ * `className`, and forwards all other props to the underlying primitive.
+ *
+ * @param className - Optional additional CSS classes to merge with the component's default styles.
+ */
 function ContextMenuContent({
   className,
   ...props
@@ -111,6 +178,17 @@ function ContextMenuContent({
   )
 }
 
+/**
+ * Renders a styled context menu item wrapping Radix's ContextMenuPrimitive.Item.
+ *
+ * Adds `data-slot="context-menu-item"` and forwards all native item props.
+ * Use `inset` to apply left inset spacing (for leading icons) and `variant` to select visual styling.
+ * The `"destructive"` variant applies destructive-focused styles; disabled and focus states are preserved.
+ *
+ * @param inset - If true, applies inset spacing appropriate for items with leading icons.
+ * @param variant - Visual variant to apply; `"default"` or `"destructive"`.
+ * @returns The rendered context menu item element.
+ */
 function ContextMenuItem({
   className,
   inset,
@@ -134,6 +212,15 @@ function ContextMenuItem({
   )
 }
 
+/**
+ * Checkbox item for the context menu that forwards props to Radix's CheckboxItem and renders a check indicator.
+ *
+ * Renders a styled ContextMenuPrimitive.CheckboxItem with a left-aligned check indicator (CheckIcon) and a
+ * data-slot attribute ("context-menu-checkbox-item"). Accepts the same props as Radix's CheckboxItem; the
+ * `checked` prop controls the checked state and is forwarded to the underlying primitive.
+ *
+ * @returns The rendered ContextMenu checkbox menu item as a JSX element.
+ */
 function ContextMenuCheckboxItem({
   className,
   children,
@@ -160,6 +247,16 @@ function ContextMenuCheckboxItem({
   )
 }
 
+/**
+ * Radio menu item wrapper around Radix's RadioItem with a left-aligned radio indicator.
+ *
+ * Forwards all props to ContextMenuPrimitive.RadioItem, injects `data-slot="context-menu-radio-item"`,
+ * and applies the component's standardized styling (including focus/disabled states). Renders an
+ * ItemIndicator containing a `CircleIcon` positioned to the left of the item label.
+ *
+ * @param className - Optional additional CSS class names to merge with the component's defaults.
+ * @returns The rendered context-menu radio item element.
+ */
 function ContextMenuRadioItem({
   className,
   children,
@@ -184,6 +281,15 @@ function ContextMenuRadioItem({
   )
 }
 
+/**
+ * Styled wrapper for Radix's ContextMenu Label.
+ *
+ * Renders a ContextMenu label with a data-slot="context-menu-label" attribute,
+ * merges provided `className` with the component's default styles, and forwards
+ * any other props to the underlying Radix primitive.
+ *
+ * @param inset - When true, applies inset spacing (adds left padding) so the label aligns with items that have left indicators.
+ */
 function ContextMenuLabel({
   className,
   inset,
@@ -204,6 +310,14 @@ function ContextMenuLabel({
   )
 }
 
+/**
+ * Styled wrapper around Radix's ContextMenu Separator.
+ *
+ * Renders a thin horizontal separator with a `data-slot="context-menu-separator"` attribute and default styling; any `className` passed will be merged with the component's defaults. All other props are forwarded to `ContextMenuPrimitive.Separator`.
+ *
+ * @param className - Optional additional CSS class names to merge with the default separator styling.
+ * @returns A JSX element representing the context menu separator.
+ */
 function ContextMenuSeparator({
   className,
   ...props
@@ -217,6 +331,15 @@ function ContextMenuSeparator({
   )
 }
 
+/**
+ * A small helper component that renders a right-aligned shortcut label for context menu items.
+ *
+ * Renders a <span> with a `data-slot="context-menu-shortcut"` attribute and default styling
+ * for muted, small, wide-tracked text. Forwards all native span props and merges any
+ * provided `className` with the default styles.
+ *
+ * @returns The rendered span element to be used as a context menu shortcut indicator.
+ */
 function ContextMenuShortcut({
   className,
   ...props

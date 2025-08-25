@@ -5,6 +5,14 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Horizontal progress bar built on Radix UI primitives.
+ *
+ * Renders a progress track (Root) and an Indicator whose horizontal translation reflects the `value` prop.
+ * If `value` is undefined it is treated as 0 (indicator translated fully out of view). A `value` of 100 positions the indicator fully visible.
+ *
+ * The rendered elements include `data-slot="progress"` on the track and `data-slot="progress-indicator"` on the fill for use in selectors.
+ */
 function Progress({
   className,
   value,

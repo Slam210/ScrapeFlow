@@ -6,6 +6,16 @@ import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Wrapper around `ResizablePrimitive.PanelGroup` that applies default layout classes and forwards props.
+ *
+ * Renders a `PanelGroup` with a `data-slot="resizable-panel-group"` attribute and a default set of utility
+ * classes that ensure full width/height and switch to a vertical column layout when the panel group's direction
+ * is vertical. Merges any provided `className` with the defaults and forwards all other props to the underlying primitive.
+ *
+ * @param className - Optional additional class names to merge with the component's default layout classes.
+ * @returns A `ResizablePrimitive.PanelGroup` React element with merged classes and forwarded props.
+ */
 function ResizablePanelGroup({
   className,
   ...props
@@ -22,12 +32,25 @@ function ResizablePanelGroup({
   )
 }
 
+/**
+ * Renders a ResizablePrimitive.Panel with a `data-slot="resizable-panel"` attribute, forwarding all received props.
+ *
+ * @returns The rendered ResizablePrimitive.Panel element.
+ */
 function ResizablePanel({
   ...props
 }: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />
 }
 
+/**
+ * Renders a resize handle wrapping react-resizable-panels' PanelResizeHandle.
+ *
+ * Renders PanelResizeHandle with `data-slot="resizable-handle"`, composes default styling with any provided `className`, forwards remaining props, and when `withHandle` is true renders a small GripVerticalIcon grip UI.
+ *
+ * @param withHandle - If true, renders the visible grip UI inside the handle.
+ * @param className - Additional class names merged into the handle's default styles.
+ */
 function ResizableHandle({
   withHandle,
   className,

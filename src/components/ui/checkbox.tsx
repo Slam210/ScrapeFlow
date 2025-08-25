@@ -6,6 +6,17 @@ import { CheckIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * A styled checkbox component that wraps Radix UI's Checkbox primitive.
+ *
+ * Renders a CheckboxPrimitive.Root with composed default styles merged with an optional `className`.
+ * Forwards all received props to the underlying Radix root so ARIA attributes, controlled state, and event handlers work as expected.
+ * The component includes a CheckboxPrimitive.Indicator containing a centered check icon and exposes data-slot attributes
+ * ("checkbox" on the root and "checkbox-indicator" on the indicator) for external styling/composition hooks.
+ *
+ * @param className - Optional additional class names merged with the component's default styling.
+ * @returns A JSX element rendering the styled Radix checkbox root with its indicator.
+ */
 function Checkbox({
   className,
   ...props

@@ -5,6 +5,16 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Root navigation menu wrapper that renders Radix NavigationMenu.Root and an optional viewport.
+ *
+ * Renders a styled NavigationMenu root and forwards all props to Radix's Root. When `viewport` is `true` (default),
+ * a positioned NavigationMenuViewport is rendered after the children. The component sets `data-slot="navigation-menu"`
+ * and `data-viewport` to reflect the `viewport` value; any provided `className` is merged with the component's base classes.
+ *
+ * @param viewport - Whether to render the NavigationMenuViewport. Defaults to `true`.
+ * @returns The rendered NavigationMenu root element.
+ */
 function NavigationMenu({
   className,
   children,
@@ -29,6 +39,15 @@ function NavigationMenu({
   )
 }
 
+/**
+ * Wrapper around Radix NavigationMenu List that applies layout classes and a data-slot attribute.
+ *
+ * Accepts the same props as `NavigationMenuPrimitive.List`. Merges any provided `className` with
+ * the component's default layout classes and forwards all other props to the underlying Radix List.
+ * The rendered element includes `data-slot="navigation-menu-list"`.
+ *
+ * @returns The rendered NavigationMenu List element.
+ */
 function NavigationMenuList({
   className,
   ...props
@@ -45,6 +64,14 @@ function NavigationMenuList({
   )
 }
 
+/**
+ * Wraps Radix NavigationMenu.Item adding a base class and slot metadata.
+ *
+ * Renders a NavigationMenu primitive Item with a base "relative" class combined with any provided `className` and sets `data-slot="navigation-menu-item"`. All other props are forwarded to the underlying Radix Item.
+ *
+ * @param className - Additional CSS classes appended to the base "relative" class.
+ * @returns The rendered NavigationMenu item element.
+ */
 function NavigationMenuItem({
   className,
   ...props
@@ -62,6 +89,15 @@ const navigationMenuTriggerStyle = cva(
   "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
 )
 
+/**
+ * A styled wrapper around Radix's NavigationMenu.Trigger that adds a chevron icon and standardized classes.
+ *
+ * Renders the underlying NavigationMenu.Trigger, forwards all props, applies `navigationMenuTriggerStyle` plus any
+ * provided `className`, and sets `data-slot="navigation-menu-trigger"`. A rotating `ChevronDownIcon` is rendered
+ * after the trigger content to indicate open/closed state.
+ *
+ * @returns The trigger element for use inside a NavigationMenu.
+ */
 function NavigationMenuTrigger({
   className,
   children,
@@ -82,6 +118,16 @@ function NavigationMenuTrigger({
   )
 }
 
+/**
+ * Wraps Radix NavigationMenu.Content with preset styling, data attributes, and responsive viewport behavior.
+ *
+ * Renders the menu content panel with built-in motion/animation classes and responsive positioning. The component
+ * sets data-slot="navigation-menu-content", merges any provided `className` with its default utility classes, and
+ * forwards all other props to the underlying Radix primitive. When the parent NavigationMenu has `viewport` disabled,
+ * alternate styles and animations are applied via `group-data-[viewport=false]/navigation-menu` selectors.
+ *
+ * @param className - Optional additional CSS classes to merge with the component's defaults.
+ */
 function NavigationMenuContent({
   className,
   ...props
@@ -99,6 +145,13 @@ function NavigationMenuContent({
   )
 }
 
+/**
+ * Renders the positioned NavigationMenu viewport used to display menu content.
+ *
+ * This component wraps Radix's NavigationMenu.Viewport in a centered, absolutely-positioned container that appears below the menu trigger. It forwards all props to the underlying Radix Viewport, merges any `className` with the component's base positioning and styling, and sets `data-slot="navigation-menu-viewport"`.
+ *
+ * The viewport uses Radix CSS variables for its height and width (e.g. `--radix-navigation-menu-viewport-height` / `--radix-navigation-menu-viewport-width`) and includes state-driven animation classes for open/close transitions.
+ */
 function NavigationMenuViewport({
   className,
   ...props
@@ -121,6 +174,14 @@ function NavigationMenuViewport({
   )
 }
 
+/**
+ * Renders a styled NavigationMenu link wrapping Radix's `NavigationMenuPrimitive.Link`.
+ *
+ * Applies the component library's stateful and interactive utility classes (active, hover, focus),
+ * sets `data-slot="navigation-menu-link"`, and forwards all props to the underlying Radix Link.
+ *
+ * @returns A JSX element suitable for use inside a `NavigationMenu`.
+ */
 function NavigationMenuLink({
   className,
   ...props
@@ -137,6 +198,15 @@ function NavigationMenuLink({
   )
 }
 
+/**
+ * Renders the navigation menu indicator: a small rotated square used to point at open menu content.
+ *
+ * Forwards all props to Radix's NavigationMenu.Indicator, applies standardized animation and layout
+ * classes, and sets `data-slot="navigation-menu-indicator"`. The visible marker is the inner
+ * rotated square element.
+ *
+ * @returns The rendered NavigationMenu indicator element.
+ */
 function NavigationMenuIndicator({
   className,
   ...props

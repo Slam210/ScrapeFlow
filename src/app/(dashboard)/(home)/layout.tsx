@@ -5,6 +5,16 @@ import { ModeToggle } from "@/components/ThemeModeToggle";
 import { Separator } from "@/components/ui/separator";
 import React, { ReactNode } from "react";
 
+/**
+ * Top-level dashboard layout that wraps pages with application providers and shell UI.
+ *
+ * Renders AppProviders around a two-column layout with a left DesktopSidebar and a right main area.
+ * The main area includes a header (BreadCrumbHeader and ModeToggle), a Separator, and a scrollable content region
+ * where the provided `children` are rendered inside a padded container.
+ *
+ * @param children - Content to render inside the layout's scrollable main content area.
+ * @returns The layout as a JSX element.
+ */
 function Layout({ children }: { children: ReactNode }) {
   return (
     <AppProviders>
