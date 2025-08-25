@@ -2,6 +2,15 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+/**
+ * Presents a simple 404 "Page Not Found" UI with a link back to the dashboard.
+ *
+ * Renders a full-screen, centered layout containing a large "404" heading,
+ * a descriptive message, a button that navigates to "/" and a footer prompting
+ * users to contact support if this is an error.
+ *
+ * @returns The rendered Not Found page as JSX.
+ */
 export default function NotFoundPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">

@@ -5,6 +5,15 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Root tabs container wrapping Radix TabsPrimitive.Root.
+ *
+ * Renders a Tabs root element with data-slot="tabs", merges the provided `className`
+ * with the default layout classes `flex flex-col gap-2`, and forwards all other props
+ * to the underlying Radix primitive.
+ *
+ * @returns A React element representing the tabs root.
+ */
 function Tabs({
   className,
   ...props
@@ -18,6 +27,15 @@ function Tabs({
   )
 }
 
+/**
+ * Wrapper around Radix `TabsPrimitive.List` that applies shared styling and a `data-slot`.
+ *
+ * Renders a Tabs list element with a default set of utility classes (layout, sizing, rounded corners,
+ * and padding) merged with an optional `className`, and adds `data-slot="tabs-list"` for tooling.
+ *
+ * @param className - Additional class names to merge with the component's default styles.
+ * @returns The rendered `TabsPrimitive.List` element.
+ */
 function TabsList({
   className,
   ...props
@@ -34,6 +52,16 @@ function TabsList({
   )
 }
 
+/**
+ * Tab trigger component — a styled wrapper around Radix UI's `TabsPrimitive.Trigger`.
+ *
+ * Renders a `TabsPrimitive.Trigger` with `data-slot="tabs-trigger"`, applies a comprehensive
+ * default class set for layout, sizing, state and focus styles, and merges any provided
+ * `className`. All other props are forwarded to the underlying Radix Trigger (accepts the
+ * same props as `TabsPrimitive.Trigger`).
+ *
+ * @returns A `TabsPrimitive.Trigger` element.
+ */
 function TabsTrigger({
   className,
   ...props
@@ -50,6 +78,14 @@ function TabsTrigger({
   )
 }
 
+/**
+ * Wrapper around Radix `Tabs.Content` that applies default layout classes and a data-slot.
+ *
+ * Merges the provided `className` with the component's default classes and forwards all other props to `TabsPrimitive.Content`.
+ *
+ * @param className - Additional CSS classes to merge with the default `"flex-1 outline-none"`.
+ * @returns A `TabsPrimitive.Content` React element with `data-slot="tabs-content"`.
+ */
 function TabsContent({
   className,
   ...props

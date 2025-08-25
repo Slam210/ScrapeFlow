@@ -6,6 +6,16 @@ import { MinusIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Thin wrapper around `OTPInput` that applies layout and sane default classes.
+ *
+ * Renders `OTPInput` with `data-slot="input-otp"`, merges `containerClassName` with
+ * `"flex items-center gap-2 has-disabled:opacity-50"`, merges `className` with
+ * `"disabled:cursor-not-allowed"`, and forwards all other props to `OTPInput`.
+ *
+ * @param containerClassName - Additional classes to append to the input container.
+ * @returns The rendered `OTPInput` element.
+ */
 function InputOTP({
   className,
   containerClassName,
@@ -26,6 +36,12 @@ function InputOTP({
   )
 }
 
+/**
+ * Wrapper container for grouping OTP slots.
+ *
+ * Renders a div with `data-slot="input-otp-group"` and combines the provided `className` with the base
+ * layout classes (`flex items-center`). All other div props are forwarded to the underlying element.
+ */
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -36,6 +52,15 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Renders a single OTP slot driven by the surrounding OTPInput context.
+ *
+ * Reads slot state from OTPInputContext.slots[index] and renders the slot character.
+ * If the slot's state indicates a fake caret, a visually centered blinking caret is shown.
+ *
+ * @param index - Zero-based index selecting which slot from OTPInputContext.slots to render.
+ * @returns A JSX element for the OTP slot.
+ */
 function InputOTPSlot({
   index,
   className,
@@ -66,6 +91,14 @@ function InputOTPSlot({
   )
 }
 
+/**
+ * Renders a visual separator used between OTP slots.
+ *
+ * The component outputs a div with `data-slot="input-otp-separator"`, `role="separator"`, and a `MinusIcon` as its content.
+ * All received div props (className, style, event handlers, etc.) are forwarded to the wrapper element.
+ *
+ * @returns A React element representing the OTP slot separator.
+ */
 function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
   return (
     <div data-slot="input-otp-separator" role="separator" {...props}>

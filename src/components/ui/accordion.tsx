@@ -6,12 +6,24 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Root accordion wrapper that renders Radix UI's Accordion root and forwards all props.
+ *
+ * Adds a `data-slot="accordion"` attribute for styling/hooks; pass any valid
+ * AccordionPrimitive.Root props (e.g., `type`, `defaultValue`, `value`, event handlers).
+ */
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 
+/**
+ * Styled wrapper around Radix UI's Accordion Item that applies a bottom border and a data-slot attribute.
+ *
+ * @param className - Additional CSS class names to merge with the default `"border-b last:border-b-0"`.
+ * @returns The rendered `AccordionPrimitive.Item` with `data-slot="accordion-item"`, merged classes, and all other props forwarded.
+ */
 function AccordionItem({
   className,
   ...props
@@ -25,6 +37,16 @@ function AccordionItem({
   )
 }
 
+/**
+ * A styled Accordion trigger that displays children and a chevron icon.
+ *
+ * Renders a Radix `AccordionPrimitive.Trigger` inside an `AccordionPrimitive.Header`, forwarding all props to the underlying Trigger.
+ * The component applies standardized styling, places the provided `children` on the left, and a chevron icon on the right that rotates when the accordion is open.
+ *
+ * @param className - Additional CSS classes to merge with the component's default styles.
+ * @param children - Content rendered inside the trigger (typically the trigger label).
+ * @returns A React element rendering the styled accordion trigger.
+ */
 function AccordionTrigger({
   className,
   children,
@@ -47,6 +69,17 @@ function AccordionTrigger({
   )
 }
 
+/**
+ * Accordion content panel that animates on open/close and provides padded content area.
+ *
+ * Renders a Radix Accordion Content with data-slot="accordion-content", applies open/closed
+ * animation utility classes and overflow handling, and wraps children in a container that
+ * provides vertical padding.
+ *
+ * @param className - Additional CSS class names merged into the inner content container.
+ * @param children - Content to display inside the accordion panel.
+ * @returns A React element representing the accordion content panel.
+ */
 function AccordionContent({
   className,
   children,

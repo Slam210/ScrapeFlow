@@ -25,6 +25,15 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * Renders a styled badge with selectable visual variants.
+ *
+ * The component applies classes from `badgeVariants` and merges any `className`. It forwards all other span props to the rendered element and sets `data-slot="badge"`.
+ *
+ * @param variant - Visual variant to apply (one of the options defined by `badgeVariants`, e.g. `"default"`, `"secondary"`, `"destructive"`, `"outline"`).
+ * @param asChild - If true, uses Radix `Slot` so the parent controls the rendered element; otherwise renders a `span`.
+ * @returns A JSX element representing the badge.
+ */
 function Badge({
   className,
   variant,

@@ -37,6 +37,17 @@ const routes = [
   },
 ];
 
+/**
+ * Desktop sidebar navigation component shown on medium and larger screens.
+ *
+ * Renders a fixed vertical navigation panel with the app Logo and a list of route links.
+ * The active route is determined from the current pathname by selecting the first route
+ * whose non-empty `href` is included in the path; if none match, the first route in
+ * the `routes` array is used as the fallback. Each route link displays its icon and label
+ * and receives an active or default sidebar styling via `buttonVariants`.
+ *
+ * @returns The sidebar JSX element (visible on `md+` breakpoints).
+ */
 export function DesktopSidebar() {
   const pathName = usePathname();
   const activeRoute =
@@ -70,6 +81,23 @@ export function DesktopSidebar() {
   );
 }
 
+/**
+ * Mobile sidebar navigation that renders a left-side sheet with the app routes.
+ *
+ * Renders a hamburger button that opens a left-anchored Sheet containing the Logo and a vertical list of route links.
+ * The component is designed for small screens only (hidden at md+). It determines the active route by finding the first
+ * route with a non-empty `href` whose value is included in the current pathname; if none matches it falls back to
+ * the first entry in `routes` (note: the Home route with an empty `href` is excluded from active-route matching).
+ *
+ * State:
+ * - Maintains internal `isOpen` state to control the Sheet visibility. Clicking a route link toggles `isOpen` to close the sheet.
+ *
+ * Rendering notes:
+ * - Each route link uses `route.href` and `route.label`, renders `route.icon` at size 20, and applies styling via `buttonVariants`
+ *   using `sidebarActiveItem` for the active route and `sidebarItem` otherwise.
+ *
+ * @returns The mobile sidebar component as JSX.
+ */
 export function MobileSidebar() {
   const pathName = usePathname();
   const activeRoute =
