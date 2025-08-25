@@ -16,16 +16,27 @@ import { MobileSidebar } from "./Sidebar";
  */
 export default function BreadCrumbHeader() {
   const pathName = usePathname();
-  const paths = pathName === "/" ? [""] : pathName?.split("/");
+  const segments = pathName.split("/").filter(Boolean);
+  const crumbs = [
+    { href: "/", label: "home" },
+    ...segments.map((seg, i) => ({
+      label: decodeURIComponent(seg),
+      href: `/${segments.slice(0, i + 1).join("/")}`,
+    })),
+  ];
   return (
     <div className="flex items-center flex-start">
       <MobileSidebar />
       <Breadcrumb>
         <BreadcrumbList>
-          {paths.map((path, index) => (
+          {crumbs.map((crumb, index) => (
             <React.Fragment key={index}>
-              <BreadcrumbLink className="capitalize" href={`/${path}`}>
-                {path === "" ? "home" : path}
+              <BreadcrumbLink
+                className="capitalize"
+                href={crumb.href}
+                aria-current={index === crumbs.length - 1 ? "page" : undefined}
+              >
+                {crumb.label}
               </BreadcrumbLink>
             </React.Fragment>
           ))}

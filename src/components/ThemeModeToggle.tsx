@@ -20,7 +20,7 @@ import {
  * @returns The dropdown JSX element, or `null` until the component has mounted (prevents SSR hydration mismatch).
  */
 export function ModeToggle() {
-  const [themeIcon, setThemeIcon] = React.useState("");
+  const [themeIcon, setThemeIcon] = React.useState("light");
   const { setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
