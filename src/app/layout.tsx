@@ -19,14 +19,15 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout component that wraps pages with global HTML and body elements.
+ * Top-level app layout that provides global HTML structure, fonts, and Clerk authentication.
  *
- * Renders an <html lang="en"> element with hydration warnings suppressed and a <body>
- * that applies the project's Geist Sans and Geist Mono font CSS variables plus
- * an `antialiased` utility class. Intended to be used as the top-level layout for the app.
+ * Wraps the application with ClerkProvider (configured to redirect to `/sign-in` after sign-out
+ * and to style the primary form button) and renders an `<html lang="en">` element with
+ * `suppressHydrationWarning`. The `<body>` applies the Geist Sans and Geist Mono font CSS
+ * variables and an `antialiased` utility class, then renders `children`.
  *
  * @param children - React nodes to render inside the page body.
- * @returns The root JSX element for the application layout.
+ * @returns The root JSX element used as the application's layout.
  */
 export default function RootLayout({
   children,
