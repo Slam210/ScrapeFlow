@@ -4,6 +4,7 @@ import { DesktopSidebar } from "@/components/Sidebar";
 import { ModeToggle } from "@/components/ThemeModeToggle";
 import { Separator } from "@/components/ui/separator";
 import React, { ReactNode } from "react";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 /**
  * Top-level dashboard layout that wraps pages with application providers and shell UI.
@@ -25,6 +26,9 @@ function Layout({ children }: { children: ReactNode }) {
             <BreadCrumbHeader />
             <div className="gap-1 flex items-center">
               <ModeToggle />
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
             </div>
           </header>
           <Separator />
