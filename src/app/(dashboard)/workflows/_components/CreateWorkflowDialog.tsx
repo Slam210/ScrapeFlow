@@ -26,6 +26,17 @@ import { useMutation } from "@tanstack/react-query";
 import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 import { toast } from "sonner";
 
+/**
+ * Renders a button-triggered modal dialog containing a form to create a new workflow.
+ *
+ * The dialog hosts a validated form (name: required, description: optional). Submitting
+ * shows a loading toast, invokes the CreateWorkflow mutation, and displays a success or
+ * error toast when the mutation resolves. The form is reset whenever the dialog is opened
+ * or closed. While the mutation is pending the submit button is disabled and shows a spinner.
+ *
+ * @param triggerText - Optional text for the dialog trigger button; defaults to "Create workflow".
+ * @returns A JSX element that renders the dialog and its contained form.
+ */
 function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
   const [open, setOpen] = useState(false);
   const form = useForm<createWorkflowSchemaType>({

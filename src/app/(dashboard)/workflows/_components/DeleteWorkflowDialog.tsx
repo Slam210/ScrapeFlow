@@ -23,6 +23,17 @@ interface Props {
   workflowId: string;
 }
 
+/**
+ * Confirmation dialog that prompts the user to type the workflow name before deleting it.
+ *
+ * Renders an AlertDialog that requires the exact `workflowName` to be entered to enable the Delete action.
+ * When Delete is clicked it shows a loading toast, invokes the `DeleteWorkflow` mutation with `workflowId`,
+ * and displays a success or error toast depending on the mutation result. The typed confirmation text is
+ * cleared on cancel and after a successful deletion.
+ *
+ * @param workflowName - The exact workflow name the user must type to confirm deletion.
+ * @param workflowId - Identifier passed to the delete mutation and used as the toast ID.
+ */
 function DeleteWorkflowDialog({
   open,
   setOpen,
