@@ -46,6 +46,7 @@ function DeleteWorkflowDialog({
     onSuccess: () => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
+      setOpen(false);
     },
     onError: () => {
       toast.error("Something went wrong", { id: workflowId });
@@ -55,30 +56,31 @@ function DeleteWorkflowDialog({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutly sure?</AlertDialogTitle>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             If you delete this workflow, you will not be able to recover it.
-            <div className="flex flex-col px-4 py-6">
-              <p>
-                If you are sure, enter <b>{workflowName}</b> to confirm:
-              </p>
-              <Input
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-              />
-            </div>
           </AlertDialogDescription>
+
+          <div className="flex flex-col px-4 py-6">
+            <p>
+              If you are sure, enter <b>{workflowName}</b> to confirm:
+            </p>
+            <Input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+            />
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => setConfirmText("")}>
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={confirmText !== workflowName || deleteMutation.isPending}
             onClick={(e) => {
               e.stopPropagation();
-              toast.loading("Deleteing workflow...", { id: workflowId });
+              toast.loading("Deleting workflow...", { id: workflowId });
               deleteMutation.mutate(workflowId);
             }}
           >

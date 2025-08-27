@@ -22,7 +22,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import TooltipWrapper from "@/components/TooltipWrapper";
+// TODO: Potentially delete this file since the component is no longer needed
+// import TooltipWrapper from "@/components/TooltipWrapper";
 import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 
 const statusColors = {
@@ -79,7 +80,7 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
         </div>
         <div className="flex items-center space-x-2">
           <Link
-            href={`/workflow/editor/${workflow.id}`}
+            href={`/workflows/editor/${workflow.id}`}
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),
               "flex items-center gap-2"
@@ -124,12 +125,8 @@ function WorkflowActions({
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button asChild>
-            <TooltipWrapper content={"More actions"}>
-              <div className="flex items-center justify-center w-full h-full">
-                <MoreVerticalIcon size={18} />
-              </div>
-            </TooltipWrapper>
+          <Button variant="ghost" size="icon" aria-label="More actions">
+            <MoreVerticalIcon size={18} />
           </Button>
         </DropdownMenuTrigger>
 

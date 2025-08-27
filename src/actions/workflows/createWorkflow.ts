@@ -8,6 +8,7 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { WorkflowStatus } from "../../types/workflow";
 import { redirect } from "next/navigation";
+import { Prisma } from "@/generated/prisma";
 
 /**
  * Validates input, creates a new draft workflow for the authenticated user, and redirects to its editor.
@@ -34,18 +35,25 @@ export async function CreateWorkflow(form: createWorkflowSchemaType) {
     throw new Error("Unauthenticated");
   }
 
-  const result = await prisma.workflow.create({
-    data: {
-      userId,
-      status: WorkflowStatus.DRAFT,
-      definition: "TODO",
-      ...data,
-    },
-  });
-
-  if (!result) {
+  let result;
+  try {
+    result = await prisma.workflow.create({
+      data: {
+        userId,
+        status: WorkflowStatus.DRAFT,
+        definition: "TODO",
+        ...data,
+      },
+    });
+  } catch (err: unknown) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      throw new Error("A workflow with this name already exists.");
+    }
     throw new Error("Failed to create new workflow");
   }
 
-  redirect(`/workflow/editor/${result.id}`);
+  redirect(`/workflows/editor/${result.id}`);
 }

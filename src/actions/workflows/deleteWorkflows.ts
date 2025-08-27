@@ -20,12 +20,13 @@ export async function DeleteWorkflow(id: string) {
     throw new Error("Unauthenticated");
   }
 
-  await prisma.workflow.delete({
-    where: {
-      id,
-      userId,
-    },
+  const { count } = await prisma.workflow.deleteMany({
+    where: { id, userId },
   });
+
+  if (count === 0) {
+    throw new Error("Workflow not found or not owned by user");
+  }
 
   revalidatePath("/workflows");
 }

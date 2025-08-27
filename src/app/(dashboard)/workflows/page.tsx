@@ -64,13 +64,15 @@ async function UserWorkflows() {
   const workflows = await GetWorkflowsForUser();
 
   if (!workflows) {
-    <Alert variant={"destructive"}>
-      <AlertCircle className="w-4 h-4" />
-      <AlertTitle>Error</AlertTitle>
-      <AlertDescription>
-        Something went wrong. Please try again later.
-      </AlertDescription>
-    </Alert>;
+    return (
+      <Alert variant={"destructive"}>
+        <AlertCircle className="w-4 h-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Something went wrong. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
   }
 
   if (workflows.length === 0) {

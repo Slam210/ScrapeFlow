@@ -1,7 +1,7 @@
 /*
   Warnings:
 
-  - You are about to drop the column `defiinition` on the `Workflow` table. All the data in the column will be lost.
+  - You are about to drop the column `definition` on the `Workflow` table. All the data in the column will be lost.
   - Added the required column `definition` to the `Workflow` table without a default value. This is not possible if the table is not empty.
 
 */
@@ -16,9 +16,19 @@ CREATE TABLE "new_Workflow" (
     "definition" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updateAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO "new_Workflow" ("createdAt", "description", "id", "name", "status", "updateAt", "userId") SELECT "createdAt", "description", "id", "name", "status", "updateAt", "userId" FROM "Workflow";
+INSERT INTO "new_Workflow" ("createdAt", "description", "definition", "id", "name", "status", "updatedAt", "userId")
+SELECT
+  "createdAt",
+  "description",
+  COALESCE("definition", 'TODO'),
+  "id",
+  "name",
+  "status",
+  "updateAt",
+  "userId"
+FROM "Workflow";
 DROP TABLE "Workflow";
 ALTER TABLE "new_Workflow" RENAME TO "Workflow";
 CREATE UNIQUE INDEX "Workflow_name_userId_key" ON "Workflow"("name", "userId");
