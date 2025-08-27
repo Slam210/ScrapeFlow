@@ -34,6 +34,14 @@ interface WorkflowCardProps {
   workflow: Workflow;
 }
 
+/**
+ * Renders a dashboard card for a single workflow, showing its status, title, and available actions.
+ *
+ * Shows a colored circular status indicator (Draft vs Published), the workflow name linked to the editor, an "Edit" button, and a "More actions" menu that includes deletion.
+ *
+ * @param workflow - The workflow object to render (must include `id`, `name`, and `status`).
+ * @returns The workflow card JSX element.
+ */
 function WorkflowCard({ workflow }: WorkflowCardProps) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
 
@@ -90,6 +98,14 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
   );
 }
 
+/**
+ * Renders the actions menu for a workflow card, including the "More actions" dropdown and delete flow.
+ *
+ * The component manages local state to show/hide the DeleteWorkflowDialog. Selecting "Delete" from the menu toggles that dialog.
+ *
+ * @param workflowName - Visible name shown in the delete confirmation dialog.
+ * @param workflowId - ID passed to the delete dialog to identify which workflow to remove.
+ */
 function WorkflowActions({
   workflowName,
   workflowId,

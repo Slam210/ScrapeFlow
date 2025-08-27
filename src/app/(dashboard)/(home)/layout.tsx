@@ -1,13 +1,12 @@
 import React, { ReactNode } from "react";
 
 /**
- * Dashboard-specific layout wrapper.
+ * Dashboard-only layout wrapper that currently renders its children unchanged.
  *
- * This layout no longer renders sidebar or header (those are now part of RootLayout).
- * It exists for future dashboard-only providers or wrappers.
+ * Reserved for dashboard-specific providers or wrappers. Sidebar and header are handled by RootLayout.
  *
- * @param children - Dashboard content nodes.
- * @returns Dashboard content wrapped with optional dashboard-specific configuration.
+ * @param children - Dashboard content nodes to be rendered inside this layout
+ * @returns The rendered dashboard content (children), potentially wrapped by future dashboard-specific providers
  */
 function DashboardLayout({ children }: { children: ReactNode }) {
   return <>{children}</>;

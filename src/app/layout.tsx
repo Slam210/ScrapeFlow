@@ -26,23 +26,17 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root application layout that wraps the entire app with providers, sidebar navigation,
- * and global configuration.
+ * App root layout that wraps application pages with global providers, navigation, and UI shell.
  *
- * Provides:
- * - ClerkProvider for authentication (redirects to `/sign-in` after sign-out and customizes the primary button style).
- * - AppProviders for React Query, theming, and other shared contexts.
- * - Google Geist Sans and Mono fonts as CSS variables with antialiasing applied.
- * - Global Sidebar navigation and top header (breadcrumb + theme toggle + Clerk user button).
- * - Toaster component for global toast notifications with rich colors.
+ * Renders global providers (ClerkProvider and AppProviders), registers Geist fonts via CSS variables,
+ * and composes the persistent sidebar, top header (breadcrumb + theme toggle + authenticated user button),
+ * a scrollable content region for `children`, and a global Toaster for notifications.
  *
- * Layout structure:
- * ┌───────────────┬───────────────────────────────────────┐
- * │   Sidebar     │ Header + Page Content (scrollable)    │
- * └───────────────┴───────────────────────────────────────┘
+ * The ClerkProvider is configured to redirect to `/sign-in` after sign-out and applies a custom primary
+ * form button appearance. The user button in the header is only rendered for authenticated users.
  *
- * @param children - React nodes representing the app's main content, rendered inside the layout's scrollable content area.
- * @returns The full application layout JSX element.
+ * @param children - The page content to render inside the layout's scrollable main area.
+ * @returns The application layout JSX element.
  */
 export default function RootLayout({
   children,
