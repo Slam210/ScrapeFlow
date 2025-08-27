@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
+import { AppProviders } from "@/components/providers/AppProvider";
+import { DesktopSidebar } from "@/components/Sidebar";
+import BreadCrumbHeader from "@/components/BreadCrumbHeader";
+import { ModeToggle } from "@/components/ThemeModeToggle";
+import { Separator } from "@/components/ui/separator";
+import React from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,15 +26,23 @@ export const metadata: Metadata = {
 };
 
 /**
- * Top-level app layout that provides global HTML structure, fonts, and Clerk authentication.
+ * Root application layout that wraps the entire app with providers, sidebar navigation,
+ * and global configuration.
  *
- * Wraps the application with ClerkProvider (configured to redirect to `/sign-in` after sign-out
- * and to style the primary form button) and renders an `<html lang="en">` element with
- * `suppressHydrationWarning`. The `<body>` applies the Geist Sans and Geist Mono font CSS
- * variables and an `antialiased` utility class, then renders `children`.
+ * Provides:
+ * - ClerkProvider for authentication (redirects to `/sign-in` after sign-out and customizes the primary button style).
+ * - AppProviders for React Query, theming, and other shared contexts.
+ * - Google Geist Sans and Mono fonts as CSS variables with antialiasing applied.
+ * - Global Sidebar navigation and top header (breadcrumb + theme toggle + Clerk user button).
+ * - Toaster component for global toast notifications with rich colors.
  *
- * @param children - React nodes to render inside the page body.
- * @returns The root JSX element used as the application's layout.
+ * Layout structure:
+ * ┌───────────────┬───────────────────────────────────────┐
+ * │   Sidebar     │ Header + Page Content (scrollable)    │
+ * └───────────────┴───────────────────────────────────────┘
+ *
+ * @param children - React nodes representing the app's main content, rendered inside the layout's scrollable content area.
+ * @returns The full application layout JSX element.
  */
 export default function RootLayout({
   children,
@@ -47,7 +62,36 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <AppProviders>
+            <div className="flex h-screen">
+              {/* Sidebar */}
+              <DesktopSidebar />
+
+              {/* Main Content Area */}
+              <div className="flex flex-col flex-1 min-h-0">
+                {/* Header */}
+                <header className="flex items-center justify-between px-6 py-4 h-[50px] container">
+                  <BreadCrumbHeader />
+                  <div className="gap-1 flex items-center">
+                    <ModeToggle />
+                    <SignedIn>
+                      <UserButton />
+                    </SignedIn>
+                  </div>
+                </header>
+
+                <Separator />
+
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-auto min-h-0">
+                  <div className="container py-4 text-accent-foreground">
+                    {children}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AppProviders>
+          <Toaster richColors />
         </body>
       </html>
     </ClerkProvider>
