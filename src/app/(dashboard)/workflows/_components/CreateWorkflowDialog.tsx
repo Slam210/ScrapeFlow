@@ -28,14 +28,16 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 /**
- * Renders a button-triggered modal dialog containing a form to create a new workflow.
+ * Render a button-triggered modal containing a validated form to create a new workflow.
  *
- * The dialog hosts a validated form (name: required, description: optional). Submitting
- * shows a loading toast, invokes the CreateWorkflow mutation, and displays a success or
- * error toast when the mutation resolves. The form is reset whenever the dialog is opened
- * or closed. While the mutation is pending the submit button is disabled and shows a spinner.
+ * The form validates input with `createWorkflowSchema` (name required, description optional).
+ * On submit a "Creating workflow..." toast is shown, the `CreateWorkflow` mutation is invoked,
+ * and the component displays either a success toast and navigates to `/workflows/editor/{id}`
+ * using the newly created workflow's `id`, or an error toast if the mutation fails.
+ * The form is reset whenever the dialog is opened or closed. While the mutation is pending the
+ * submit button is disabled and shows a spinner.
  *
- * @param triggerText - Optional text for the dialog trigger button; defaults to "Create workflow".
+ * @param triggerText - Optional text for the dialog trigger button; defaults to `"Create workflow"`.
  * @returns A JSX element that renders the dialog and its contained form.
  */
 function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {

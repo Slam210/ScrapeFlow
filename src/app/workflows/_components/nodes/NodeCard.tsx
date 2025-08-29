@@ -4,6 +4,19 @@ import { cn } from "@/lib/utils";
 import { useReactFlow } from "@xyflow/react";
 import React, { ReactNode } from "react";
 
+/**
+ * Card wrapper for rendering node content that can center the React Flow viewport on double-click.
+ *
+ * The component renders a styled container for node children and, when double-clicked, attempts to
+ * locate the corresponding React Flow node by `nodeId` and center the viewport on the node's visual center
+ * (uses the node's position and measured width/height). If the node or required measurements are missing,
+ * the double-click is a no-op.
+ *
+ * @param nodeId - The React Flow node id to target when centering the viewport.
+ * @param isSelected - When true, applies an additional "border-primary" class to indicate selection.
+ * @param children - Rendered node content.
+ * @returns A JSX element representing the node card.
+ */
 function NodeCard({
   children,
   isSelected,

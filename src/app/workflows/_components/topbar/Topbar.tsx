@@ -13,6 +13,19 @@ interface Props {
   workflowId: string;
 }
 
+/**
+ * Sticky top bar with a back button, title, optional subtitle, and a Save button.
+ *
+ * Renders a header containing:
+ * - a back button that calls `router.back()` when clicked,
+ * - a bold, truncated `title`,
+ * - an optional, truncated `subtitle` (rendered only when provided),
+ * - a right-aligned SaveButton which receives `workflowId`.
+ *
+ * @param title - Visible main title text.
+ * @param subtitle - Optional secondary line displayed under the title.
+ * @param workflowId - Identifier forwarded to the SaveButton for save actions.
+ */
 function Topbar({ title, subtitle, workflowId }: Props) {
   const router = useRouter();
 
