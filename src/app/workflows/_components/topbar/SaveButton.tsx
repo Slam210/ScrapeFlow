@@ -6,6 +6,17 @@ import { CheckIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Button that saves the current React Flow state by updating the workflow.
+ *
+ * Captures the current flow via `useReactFlow().toObject()`, serializes it to JSON, and triggers
+ * the `UpdateWorkflow` mutation with the supplied `workflowId`. Displays a loading toast while the
+ * save is in progress and success/error toasts when the mutation completes. The button is disabled
+ * while the save mutation is pending.
+ *
+ * @param workflowId - ID of the workflow to update
+ * @returns A JSX element (button) that initiates the save action when clicked
+ */
 function SaveButton({ workflowId }: { workflowId: string }) {
   const { toObject } = useReactFlow();
 

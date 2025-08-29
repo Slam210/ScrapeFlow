@@ -14,16 +14,19 @@ import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
 import { TaskType } from "@/types/task";
 
 /**
- * Validates input, creates a new draft workflow for the authenticated user, and redirects to its editor.
+ * Creates a new draft workflow for the authenticated user and returns the created workflow's id.
  *
- * Validates `form` against `createWorkflowSchema`, requires an authenticated user, creates a workflow record
- * with `status` set to `WorkflowStatus.DRAFT` and a placeholder `definition`, and then redirects to
- * `/workflow/editor/{id}` on success.
+ * Validates `form` against `createWorkflowSchema`, requires an authenticated user, seeds an initial flow
+ * (one entry node using `TaskType.LAUNCH_BROWSER`) and persists the workflow with `status` set to
+ * `WorkflowStatus.DRAFT` and `definition` set to the JSON-stringified initial flow. Additional workflow
+ * fields are populated from the validated `form` data.
  *
- * @param form - Data matching `createWorkflowSchema` (fields used to populate the new workflow record)
+ * @param form - Input data matching `createWorkflowSchema`; used to populate the new workflow record
+ * @returns An object containing the created workflow's id: `{ id: string }`
  * @throws Error("Invalid form data") - if `form` fails schema validation
  * @throws Error("Unauthenticated") - if there is no authenticated user
- * @throws Error("Failed to create new workflow") - if the database create operation does not return a result
+ * @throws Error("A workflow with this name already exists.") - if the database reports a unique-constraint conflict (Prisma P2002)
+ * @throws Error("Failed to create new workflow 1") - if the database create operation does not return a result
  */
 export async function CreateWorkflow(form: createWorkflowSchemaType) {
   const { success, data } = createWorkflowSchema.safeParse(form);

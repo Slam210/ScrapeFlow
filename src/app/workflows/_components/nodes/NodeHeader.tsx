@@ -7,6 +7,18 @@ import { TaskType } from "@/types/task";
 import { CoinsIcon, GripVerticalIcon } from "lucide-react";
 import React from "react";
 
+/**
+ * Renders a compact header for a given task type showing its icon, label, and action badges/controls.
+ *
+ * Looks up the task definition in TaskRegistry by `taskType` and displays:
+ * - the task's `icon` and `label`,
+ * - an "Entry Point" badge when `task.isEntryPoint` is true,
+ * - a small badge with a coins icon and the text "TODO",
+ * - and a drag-handle button for reordering.
+ *
+ * @param taskType - The TaskType key used to resolve the task from TaskRegistry.
+ * @returns A React element representing the node header.
+ */
 function NodeHeader({ taskType }: { taskType: TaskType }) {
   const task = TaskRegistry[taskType];
   return (

@@ -4,6 +4,15 @@ import { ReactFlowProvider } from "@xyflow/react";
 import FlowEditor from "./FlowEditor";
 import Topbar from "./topbar/Topbar";
 
+/**
+ * Renders the workflow editor UI for a given Workflow.
+ *
+ * Wraps the editor in a ReactFlowProvider and composes Topbar and FlowEditor
+ * to present and edit the provided `workflow`.
+ *
+ * @param workflow - The Workflow to display and edit; its `name` is used as the topbar subtitle and the object is forwarded to FlowEditor.
+ * @returns The editor's React element.
+ */
 function Editor({ workflow }: { workflow: Workflow }) {
   return (
     <ReactFlowProvider>

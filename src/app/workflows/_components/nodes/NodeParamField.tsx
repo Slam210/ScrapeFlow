@@ -6,6 +6,17 @@ import StringParam from "./params/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
 
+/**
+ * Renders an editor control for a single node parameter and wires updates into React Flow.
+ *
+ * Renders a parameter control based on `param.type` (currently supports `TaskParamType.STRING` via
+ * the `StringParam` component). When the parameter value changes, the component updates the
+ * corresponding entry in the node's `data.inputs` using React Flow's `updateNodeData`.
+ *
+ * @param param - The task parameter definition to render (name, type, metadata).
+ * @param nodeId - The React Flow node id whose `data.inputs` contains the parameter value.
+ * @returns A JSX element for the parameter editor.
+ */
 function NodeParamField({
   param,
   nodeId,
