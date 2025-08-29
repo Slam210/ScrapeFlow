@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 /**
  * Renders a button-triggered modal dialog containing a form to create a new workflow.
@@ -38,6 +39,7 @@ import { toast } from "sonner";
  * @returns A JSX element that renders the dialog and its contained form.
  */
 function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const form = useForm<createWorkflowSchemaType>({
     resolver: zodResolver(createWorkflowSchema),
@@ -49,8 +51,9 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: CreateWorkflow,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Workflow created", { id: "create-workflow" });
+      router.push(`/workflows/editor/${data.id}`);
     },
     onError: () => {
       toast.error("Failed to create workflow", { id: "create-workflow" });

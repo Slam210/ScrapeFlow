@@ -7,8 +7,11 @@ import {
 } from "../../../schema/workflow";
 import { auth } from "@clerk/nextjs/server";
 import { WorkflowStatus } from "../../types/workflow";
-import { redirect } from "next/navigation";
 import { Prisma } from "@/generated/prisma";
+import { AppNode } from "@/types/appNode";
+import { Edge } from "@xyflow/react";
+import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
+import { TaskType } from "@/types/task";
 
 /**
  * Validates input, creates a new draft workflow for the authenticated user, and redirects to its editor.
@@ -35,13 +38,21 @@ export async function CreateWorkflow(form: createWorkflowSchemaType) {
     throw new Error("Unauthenticated");
   }
 
+  const initialFlow: { nodes: AppNode[]; edges: Edge[] } = {
+    nodes: [],
+    edges: [],
+  };
+
+  // Flow entry point
+  initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER));
+
   let result;
   try {
     result = await prisma.workflow.create({
       data: {
         userId,
         status: WorkflowStatus.DRAFT,
-        definition: "TODO",
+        definition: JSON.stringify(initialFlow),
         ...data,
       },
     });
@@ -52,8 +63,11 @@ export async function CreateWorkflow(form: createWorkflowSchemaType) {
     ) {
       throw new Error("A workflow with this name already exists.");
     }
-    throw new Error("Failed to create new workflow");
   }
 
-  redirect(`/workflows/editor/${result.id}`);
+  if (result === undefined) {
+    throw new Error("Failed to create new workflow 1");
+  }
+
+  return { id: result.id };
 }
