@@ -10,6 +10,17 @@ const NodeComponent = memo((props: NodeProps) => {
   const nodeData = props.data as AppNodeData;
   const task = TaskRegistry[nodeData.type];
 
+  if (!task) {
+    return (
+      <NodeCard nodeId={props.id} isSelected={!!props.selected}>
+        <NodeHeader taskType={nodeData.type} />
+        <div className="p-3 text-xs text-muted-foreground">
+          Unknown task type: {String(nodeData.type)}
+        </div>
+      </NodeCard>
+    );
+  }
+
   return (
     <NodeCard nodeId={props.id} isSelected={!!props.selected}>
       <NodeHeader taskType={nodeData.type} />

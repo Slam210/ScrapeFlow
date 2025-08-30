@@ -26,26 +26,32 @@ function NodeParamField({
 }) {
   const { getNode, updateNodeData } = useReactFlow();
   const node = getNode(nodeId) as AppNode;
-  const value = node?.data.inputs?.[param.name];
 
   const updateNodeParamValue = useCallback(
     (newValue: string) => {
+      if (!node) return;
       updateNodeData(nodeId, {
         inputs: {
-          ...node?.data.inputs,
+          ...node.data.inputs,
           [param.name]: newValue,
         },
       });
     },
-    [nodeId, updateNodeData, param.name, node?.data.inputs]
+    [node, nodeId, updateNodeData, param.name]
   );
+
+  if (!node) {
+    return null;
+  }
+
+  const value = node.data.inputs?.[param.name];
 
   switch (param.type) {
     case TaskParamType.STRING:
       return (
         <StringParam
           param={param}
-          value={value}
+          value={value ?? ""}
           updateNodeParamValue={updateNodeParamValue}
         />
       );

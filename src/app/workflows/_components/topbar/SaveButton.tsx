@@ -1,3 +1,5 @@
+"use client";
+
 import { UpdateWorkflow } from "@/actions/workflows/updateWorkflow";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";

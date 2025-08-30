@@ -7,9 +7,7 @@ export interface AppNodeData {
   [key: string]: unknown;
 }
 
-export interface AppNode extends Node {
-  data: AppNodeData;
-}
+export type AppNode = Node<AppNodeData>;
 
 export interface ParamProps {
   param: TaskParam;

@@ -5,7 +5,14 @@ export const LaunchBrowserTask = {
   type: TaskType.LAUNCH_BROWSER,
   label: "Launch Browser",
   icon: (props: LucideProps) => {
-    return <GlobeIcon className="stroke-pink-400" {...props} />;
+    return (
+      <GlobeIcon
+        {...props}
+        className={[props.className, "stroke-pink-400"]
+          .filter(Boolean)
+          .join(" ")}
+      />
+    );
   },
   isEntryPoint: true,
   inputs: [

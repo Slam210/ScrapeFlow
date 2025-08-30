@@ -23,7 +23,7 @@ async function page({ params }: { params: Promise<{ workflowId: string }> }) {
     return <div>Unauthenticated</div>;
   }
 
-  const workflow: Workflow | null = await prisma.workflow.findUnique({
+  const workflow: Workflow | null = await prisma.workflow.findFirst({
     where: {
       id: workflowId,
       userId,
