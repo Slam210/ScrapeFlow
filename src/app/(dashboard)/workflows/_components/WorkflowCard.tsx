@@ -22,8 +22,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// TODO: Potentially delete this file since the component is no longer needed
-// import TooltipWrapper from "@/components/TooltipWrapper";
 import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 
 const statusColors = {
@@ -65,7 +63,7 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
           <div>
             <h3 className="text-base font-bold text-muted-foreground flex">
               <Link
-                href={`/workflow/editor/${workflow.id}`}
+                href={`/workflows/editor/${workflow.id}`}
                 className="flex items-center hover:underline"
               >
                 {workflow.name}
