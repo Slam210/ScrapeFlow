@@ -123,8 +123,8 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
         (output) => output.name === connection.sourceHandle
       );
 
-      const input = targetTask.outputs.find(
-        (output) => output.name === connection.targetHandle
+      const input = targetTask.inputs.find(
+        (input) => input.name === connection.targetHandle
       );
 
       if (output?.type !== input?.type) {
