@@ -14,7 +14,7 @@ const NodeComponent = memo((props: NodeProps) => {
   if (!task) {
     return (
       <NodeCard nodeId={props.id} isSelected={!!props.selected}>
-        <NodeHeader taskType={nodeData.type} />
+        <NodeHeader taskType={nodeData.type} nodeId={props.id} />
         <div className="p-3 text-xs text-muted-foreground">
           Unknown task type: {String(nodeData.type)}
         </div>
@@ -24,7 +24,7 @@ const NodeComponent = memo((props: NodeProps) => {
 
   return (
     <NodeCard nodeId={props.id} isSelected={!!props.selected}>
-      <NodeHeader taskType={nodeData.type} />
+      <NodeHeader taskType={nodeData.type} nodeId={props.id} />
       <NodeInputs>
         {task.inputs.map((input) => (
           <NodeInput key={input.name} input={input} nodeId={props.id} />
