@@ -7,7 +7,7 @@ import React, { ReactNode } from "react";
 import { ColorForHandle } from "./common";
 
 export function NodeOutputs({ children }: { children: ReactNode }) {
-  return <div>NodeOutputs</div>;
+  return <div>{children}</div>;
 }
 
 export function NodeOutput({ output }: { output: TaskParam }) {

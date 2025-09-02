@@ -1,4 +1,5 @@
 import { TaskParamType, TaskType } from "@/types/task";
+import { WorkflowTask } from "@/types/workflow";
 import { CodeIcon, LucideProps } from "lucide-react";
 
 export const PageToHtml = {
@@ -15,6 +16,7 @@ export const PageToHtml = {
     );
   },
   isEntryPoint: true,
+  credits: 2,
   inputs: [
     {
       name: "Web Page",
@@ -28,4 +30,4 @@ export const PageToHtml = {
       type: TaskParamType.STRING,
     },
   ],
-};
+} satisfies WorkflowTask;
