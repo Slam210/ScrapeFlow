@@ -5,6 +5,7 @@ import React from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import FlowEditor from "./FlowEditor";
 import Topbar from "./topbar/Topbar";
+import TaskMenu from "./TaskMenu";
 
 /**
  * Renders the workflow editor UI for a given Workflow.
@@ -25,6 +26,7 @@ function Editor({ workflow }: { workflow: Workflow }) {
           workflowId={workflow.id}
         />
         <section className="flex h-full overflow-auto">
+          <TaskMenu />
           <FlowEditor workflow={workflow} />
         </section>
       </div>
