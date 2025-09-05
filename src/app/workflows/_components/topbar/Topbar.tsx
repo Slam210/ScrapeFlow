@@ -12,6 +12,7 @@ interface Props {
   title: string;
   subtitle?: string;
   workflowId: string;
+  hideButtons?: boolean;
 }
 
 /**
@@ -27,7 +28,7 @@ interface Props {
  * @param subtitle - Optional secondary line displayed under the title.
  * @param workflowId - Identifier forwarded to the SaveButton for save actions.
  */
-function Topbar({ title, subtitle, workflowId }: Props) {
+function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
   const router = useRouter();
 
   return (
@@ -46,8 +47,12 @@ function Topbar({ title, subtitle, workflowId }: Props) {
         </div>
       </div>
       <div className="flex gap-1 flex-1 justify-end">
-        <ExecuteButton workflowId={workflowId} />
-        <SaveButton workflowId={workflowId} />
+        {!hideButtons && (
+          <>
+            <ExecuteButton workflowId={workflowId} />
+            <SaveButton workflowId={workflowId} />
+          </>
+        )}
       </div>
     </header>
   );
