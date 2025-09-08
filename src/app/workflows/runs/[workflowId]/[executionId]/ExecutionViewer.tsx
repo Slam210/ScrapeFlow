@@ -1,3 +1,5 @@
+"use client";
+
 import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/GetWorkflowExecutionWithPhases";
 import { GetWorkflowPhaseDetails } from "@/actions/workflows/getWorkflowPhaseDetails";
 import { Badge } from "@/components/ui/badge";
@@ -119,7 +121,9 @@ export default function ExecutionViewer({
           ))}
         </div>
       </aside>
-      <div className="flex w-full h-full"></div>
+      <div className="flex w-full h-full">
+        {JSON.stringify(phaseDetails, null, 2)}
+      </div>
     </div>
   );
 }

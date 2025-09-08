@@ -1,25 +1,25 @@
-"use client";
-
 import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/GetWorkflowExecutionWithPhases";
 import Topbar from "@/app/workflows/_components/topbar/Topbar";
 import { Loader2Icon } from "lucide-react";
 import React, { Suspense } from "react";
 import ExecutionViewer from "./ExecutionViewer";
 
-function ExecutionViewerPage({
+async function ExecutionViewerPage({
   params,
 }: {
-  params: {
+  params: Promise<{
     executionId: string;
     workflowId: string;
-  };
+  }>;
 }) {
+  const { executionId, workflowId } = await params;
+
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden">
       <Topbar
-        workflowId={params.workflowId}
+        workflowId={workflowId}
         title="Workflow run details"
-        subtitle={`Run ID: ${params.executionId}`}
+        subtitle={`Run ID: ${executionId}`}
         hideButtons={true}
       />
       <section className="flex h-full overflow-auto">
@@ -30,7 +30,7 @@ function ExecutionViewerPage({
             </div>
           }
         >
-          <ExecutionViewerWrapper executionId={params.executionId} />
+          <ExecutionViewerWrapper executionId={executionId} />
         </Suspense>
       </section>
     </div>
