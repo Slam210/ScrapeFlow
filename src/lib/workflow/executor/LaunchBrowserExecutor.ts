@@ -21,7 +21,9 @@ export async function LaunchBrowserExecutor(
 
     return true;
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     console.error(error);
+    environment.log.error(message);
     return false;
   }
 }

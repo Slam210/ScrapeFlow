@@ -11,7 +11,9 @@ export async function PageToHtmlExecutor(
     environment.setOutput("Html", html);
     return true;
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     console.error(error);
+    environment.log.error(message);
     return false;
   }
 }
