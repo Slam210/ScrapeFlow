@@ -33,7 +33,13 @@ export default function ExecutionsTable({
   const query = useQuery({
     queryKey: ["executions", workflowId],
     initialData,
-    queryFn: () => GetWorkflowExecutions(workflowId),
+    queryFn: async () => {
+      const res = await fetch(`/api/workflows/${workflowId}/executions`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Failed to load executions");
+      return (await res.json()) as InitialDataType;
+    },
     refetchInterval: 5000,
   });
   return (
@@ -58,15 +64,16 @@ export default function ExecutionsTable({
 
             const formattedStartedAt =
               execution.startedAt &&
-              formatDistanceToNow(execution.startedAt, { addSuffix: true });
-
+              formatDistanceToNow(new Date(execution.startedAt), {
+                addSuffix: true,
+              });
             return (
               <TableRow
                 key={execution.id}
                 className="cursor-pointer"
                 onClick={() => {
                   router.push(
-                    `/workflow/runs/${execution.workflowId}/${execution.id}`
+                    `/workflows/runs/${execution.workflowId}/${execution.id}`
                   );
                 }}
               >

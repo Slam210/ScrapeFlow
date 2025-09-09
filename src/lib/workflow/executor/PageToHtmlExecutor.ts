@@ -6,7 +6,15 @@ export async function PageToHtmlExecutor(
 ): Promise<boolean> {
   console.log("Starting web browser");
   try {
-    const html = await environment.getPage()!.content();
+    const page = environment.getPage();
+    if (!page) {
+      environment.log.error(
+        "No active page found. Run 'Launch Browser' first."
+      );
+      return false;
+    }
+    const html = await page.content();
+
     // console.log(html);
     environment.setOutput("Html", html);
     return true;

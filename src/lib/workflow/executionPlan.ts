@@ -7,8 +7,8 @@ import { Edge } from "@xyflow/react";
 import { TaskRegistry } from "./task/registry";
 
 export enum FlowToValidationPlanValidationError {
-  "NO_ENTRY_POINT",
-  "INVALID_INPUTS",
+  NO_ENTRY_POINT = "NO_ENTRY_POINT",
+  INVALID_INPUTS = "INVALID_INPUTS",
 }
 
 type FlowToExecutionPlanType = {
@@ -83,10 +83,21 @@ export function FlowToExecutionPlan(
 
       nextPhase.nodes.push(currentNode);
     }
-    for (const node of nextPhase.nodes) {
-      planned.add(node.id);
+    if (nextPhase.nodes.length === 0) {
+      break;
     }
+    for (const node of nextPhase.nodes) planned.add(node.id);
     executionPlan.push(nextPhase);
+  }
+
+  if (planned.size < nodes.length) {
+    // surface remaining nodes as invalid with their unmet inputs
+    for (const n of nodes) {
+      if (!planned.has(n.id)) {
+        const unmet = getInvalidInputs(n, edges, planned);
+        inputsWithErrors.push({ nodeId: n.id, inputs: unmet });
+      }
+    }
   }
 
   if (inputsWithErrors.length > 0) {

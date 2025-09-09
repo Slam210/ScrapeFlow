@@ -23,13 +23,13 @@ export async function ExtractTextFromElementExecutor(
     const $ = cheerio.load(html);
     const element = $(selector);
 
-    if (!element) {
+    if (element.length === 0) {
       console.error("Element not found");
       environment.log.error("Element not found");
       return false;
     }
 
-    const extractedText = $.text(element);
+    const extractedText = element.text().trim();
     if (!extractedText) {
       console.error("Element has no text");
       environment.log.error("Element has no text");

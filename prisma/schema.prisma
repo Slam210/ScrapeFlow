@@ -59,7 +59,7 @@ model ExecutionPhase {
 
   workflowExecutionId String
   execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
-  
+
   logs ExecutionLog[]
 }
 

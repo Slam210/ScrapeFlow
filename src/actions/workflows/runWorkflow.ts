@@ -26,7 +26,7 @@ export async function RunWorkFlow(form: {
     throw new Error("Workflowid is required");
   }
 
-  const workflow = await prisma.workflow.findUnique({
+  const workflow = await prisma.workflow.findFirst({
     where: {
       userId,
       id: workflowId,
@@ -66,12 +66,16 @@ export async function RunWorkFlow(form: {
       phases: {
         create: executionPlan.flatMap((phase) => {
           return phase.nodes.flatMap((node) => {
+            const reg = TaskRegistry[node.data.type];
+            if (!reg) {
+              throw new Error(`Unknown task type: ${node.data.type}`);
+            }
             return {
               userId,
               status: ExecutionPhaseStatus.CREATED,
               number: phase.phase,
               node: JSON.stringify(node),
-              name: TaskRegistry[node.data.type].label,
+              name: reg.label,
             };
           });
         }),

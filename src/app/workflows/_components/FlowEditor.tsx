@@ -70,8 +70,7 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
     (event: React.DragEvent) => {
       event.preventDefault();
       const taskType = event.dataTransfer.getData("application/reactflow");
-      if (typeof taskType === undefined || !taskType) return;
-
+      if (typeof taskType === "undefined" || !taskType) return;
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -122,6 +121,11 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
       const output = sourceTask.outputs.find(
         (output) => output.name === connection.sourceHandle
       );
+
+      if (!connection.sourceHandle || !connection.targetHandle) {
+        console.error("Invalid Connection: missing handle");
+        return false;
+      }
 
       const input = targetTask.inputs.find(
         (input) => input.name === connection.targetHandle

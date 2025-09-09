@@ -15,7 +15,7 @@ export const PageToHtmlTask = {
       />
     );
   },
-  isEntryPoint: true,
+  isEntryPoint: false,
   credits: 2,
   inputs: [
     {

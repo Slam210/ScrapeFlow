@@ -9,17 +9,8 @@ export async function GetWorkflowExecutionWithPhases(executionId: string) {
     throw new Error("unauthenticated");
   }
 
-  return prisma.workflowExecution.findUnique({
-    where: {
-      id: executionId,
-      userId,
-    },
-    include: {
-      phases: {
-        orderBy: {
-          number: "asc",
-        },
-      },
-    },
+  return prisma.workflowExecution.findFirst({
+    where: { id: executionId, userId },
+    include: { phases: { orderBy: { number: "asc" } } },
   });
 }

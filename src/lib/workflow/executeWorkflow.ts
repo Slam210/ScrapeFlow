@@ -22,7 +22,10 @@ export async function ExecuteWorkflow(executionId: string) {
     where: {
       id: executionId,
     },
-    include: { workflow: true, phases: true },
+    include: {
+      workflow: true,
+      phases: { orderBy: { number: "asc" } },
+    },
   });
 
   if (!execution) {
@@ -160,6 +163,21 @@ async function finalizeWorkflowExecution(
     ? WorkflowExecutionStatus.FAILED
     : WorkflowExecutionStatus.COMPLETED;
 
+  if (executionFailed) {
+    await prisma.executionPhase.updateMany({
+      where: {
+        workflowExecutionId: executionId,
+        status: {
+          in: [ExecutionPhaseStatus.PENDING, ExecutionPhaseStatus.RUNNING],
+        },
+      },
+      data: {
+        status: ExecutionPhaseStatus.FAILED,
+        completedAt: new Date(),
+      },
+    });
+  }
+
   await prisma.workflowExecution.update({
     where: {
       id: executionId,
@@ -208,7 +226,19 @@ async function executeWorkflowPhase(
     },
   });
 
-  const creditsRequired = TaskRegistry[node.data.type].credits;
+  const taskDef = TaskRegistry[node.data.type];
+  if (!taskDef) {
+    logCollector.error(`Unknown task type: ${node.data.type}`);
+    await finalizePhase(
+      phase.id,
+      false,
+      environment.phases[node.id].outputs,
+      logCollector,
+      0
+    );
+    return { success: false, creditsConsumed: 0 };
+  }
+  const creditsRequired = taskDef.credits;
 
   // Decrement user balance with required credits
   let success = await decrementCredits(userId, creditsRequired, logCollector);
@@ -238,8 +268,8 @@ async function finalizePhase(
   creditsConsumed: number
 ) {
   const finalStatus = success
-    ? WorkflowExecutionStatus.COMPLETED
-    : WorkflowExecutionStatus.FAILED;
+    ? ExecutionPhaseStatus.COMPLETED
+    : ExecutionPhaseStatus.FAILED;
 
   await prisma.executionPhase.update({
     where: {
@@ -305,10 +335,22 @@ function setupEnvironmentForPhase(
       continue;
     }
 
-    const outputValue =
-      environment.phases[connectedEdge.source].outputs[
-        connectedEdge.sourceHandle!
-      ];
+    const upstream = environment.phases[connectedEdge.source];
+    if (!upstream) {
+      console.error(
+        "Upstream phase not initialized for",
+        input.name,
+        "source node id:",
+        connectedEdge.source
+      );
+      continue;
+    }
+    const handle = connectedEdge.sourceHandle;
+    if (!handle) {
+      console.error("Missing source handle for edge to input", input.name);
+      continue;
+    }
+    const outputValue = upstream.outputs[handle];
 
     environment.phases[node.id].inputs[input.name] = outputValue;
   }
@@ -346,17 +388,18 @@ async function decrementCredits(
   logCollector: LogCollector
 ) {
   try {
-    await prisma.userBalance.update({
-      where: {
-        userId,
-        credits: { gte: amount },
-      },
+    const result = await prisma.userBalance.updateMany({
+      where: { userId, credits: { gte: amount } },
       data: { credits: { decrement: amount } },
     });
+    if (result.count === 0) {
+      logCollector.error("Insufficient balance");
+      return false;
+    }
     return true;
   } catch (error) {
     console.error(error);
-    logCollector.error("Insifficient balance");
+    logCollector.error("Failed to decrement credits");
     return false;
   }
 }

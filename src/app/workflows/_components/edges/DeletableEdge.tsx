@@ -32,7 +32,11 @@ export default function DeletableEdge(props: EdgeProps) {
             variant={"outline"}
             size={"icon"}
             className="w-5 h-5 border cursor-pointer rounded-full text-sm leading-none hover:shadow-lg"
-            onClick={() => {
+            aria-label="Delete edge"
+            title="Delete edge"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
               setEdges((edges) => edges.filter((edge) => edge.id !== props.id));
             }}
           >

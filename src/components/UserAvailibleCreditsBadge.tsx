@@ -1,6 +1,5 @@
 "use client";
 
-import { GetAvailibleCredits } from "@/actions/billing/getAvailibleCredits";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CoinsIcon, Loader2Icon } from "lucide-react";
@@ -12,7 +11,12 @@ import { buttonVariants } from "./ui/button";
 export default function UserAvailibleCreditsBadge() {
   const query = useQuery({
     queryKey: ["user-availible-credits"],
-    queryFn: () => GetAvailibleCredits(),
+    queryFn: async () => {
+      const res = await fetch("/api/billing/credits", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to load credits");
+      const data: { credits: number } = await res.json();
+      return data.credits;
+    },
     refetchInterval: 30 * 1000, // 30 seconds
   });
   return (
@@ -25,11 +29,13 @@ export default function UserAvailibleCreditsBadge() {
     >
       <CoinsIcon size={20} className="text-primary" />
       <span className="font-semibold capitalize">
-        {query.isLoading && <Loader2Icon className="w-4 h-4 animate-spin" />}
-        {!query.isLoading && query.data && (
+        {query.isLoading ? (
+          <Loader2Icon className="w-4 h-4 animate-spin" />
+        ) : typeof query.data === "number" && query.data >= 0 ? (
           <ReactCountUpWrapper value={query.data} />
+        ) : (
+          "-"
         )}
-        {!query.isLoading && query.data === undefined && "-"}
       </span>
     </Link>
   );

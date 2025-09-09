@@ -8,7 +8,7 @@ import {
 
 export function createLogCollector(): LogCollector {
   const logs: Log[] = [];
-  const getAll = () => logs;
+  const getAll = (): Log[] => logs.slice();
 
   const logFunctions = {} as Record<LogLevel, LogFunction>;
   LogLevels.forEach(

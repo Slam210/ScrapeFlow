@@ -7,21 +7,17 @@ import React from "react";
 
 export default function NavigationTabs({ workflowId }: { workflowId: string }) {
   const pathname = usePathname();
-  const activeValue = pathname.split("/")[2];
+  const activeValue = pathname.split("/")[2]?.toLowerCase() ?? "editor";
+
   return (
     <Tabs value={activeValue} className="w-[400px]">
       <TabsList className="grid w-full grid-cols-2">
-        <Link href={`/workflow/editor/${workflowId}`}>
-          <TabsTrigger value="Editor" className="w-full">
-            Editor
-          </TabsTrigger>
-        </Link>
-        <Link href={`/workflow/runs/${workflowId}`}>
-          {" "}
-          <TabsTrigger value="Runs" className="w-full">
-            Runs
-          </TabsTrigger>
-        </Link>
+        <TabsTrigger value="editor" className="w-full" asChild>
+          <Link href={`/workflows/editor/${workflowId}`}>Editor</Link>
+        </TabsTrigger>
+        <TabsTrigger value="runs" className="w-full" asChild>
+          <Link href={`/workflows/runs/${workflowId}`}>Runs</Link>
+        </TabsTrigger>
       </TabsList>
     </Tabs>
   );
