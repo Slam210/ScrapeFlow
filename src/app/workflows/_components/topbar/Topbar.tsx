@@ -17,17 +17,18 @@ interface Props {
 }
 
 /**
- * Sticky top bar with a back button, title, optional subtitle, and a Save button.
+ * Sticky top bar with back navigation, a title/subtitle, navigation tabs, and optional action buttons.
  *
- * Renders a header containing:
- * - a back button that calls `router.back()` when clicked,
- * - a bold, truncated `title`,
- * - an optional, truncated `subtitle` (rendered only when provided),
- * - a right-aligned SaveButton which receives `workflowId`.
+ * Renders a header with:
+ * - a left back button that calls `router.back()`,
+ * - a bold, truncated `title` and an optional truncated `subtitle`,
+ * - centered `NavigationTabs` for the given `workflowId`,
+ * - right-aligned action buttons (`ExecuteButton` and `SaveButton`) that receive `workflowId` and are shown unless `hideButtons` is true.
  *
- * @param title - Visible main title text.
- * @param subtitle - Optional secondary line displayed under the title.
- * @param workflowId - Identifier forwarded to the SaveButton for save actions.
+ * @param title - Main title text displayed prominently.
+ * @param subtitle - Optional secondary line shown under the title when provided.
+ * @param workflowId - Workflow identifier forwarded to NavigationTabs, ExecuteButton, and SaveButton.
+ * @param hideButtons - When true, hides the right-aligned Execute and Save buttons; defaults to false.
  */
 function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
   const router = useRouter();

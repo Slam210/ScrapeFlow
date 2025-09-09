@@ -11,6 +11,16 @@ const indicatorColors: Record<WorkflowExecutionStatus, string> = {
   COMPLETED: "bg-emerald-600",
 };
 
+/**
+ * Renders a small colored status indicator dot for a workflow execution.
+ *
+ * The dot's color is selected from `indicatorColors` based on the provided
+ * `status` and combined with the base sizing/shape classes. If `status` has
+ * no mapped color, only the base sizing/shape classes are applied.
+ *
+ * @param status - The workflow execution status to represent.
+ * @returns A JSX element: a 8×8px rounded dot whose background color reflects `status`.
+ */
 export default function ExecutionStatusIndicator({
   status,
 }: {

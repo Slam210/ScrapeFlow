@@ -11,16 +11,20 @@ import { CoinsIcon, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import React from "react";
 
 /**
- * Renders a compact header for a given task type showing its icon, label, and action badges/controls.
+ * Render a compact header for a workflow task node showing its icon, label and action controls.
  *
- * Looks up the task definition in TaskRegistry by `taskType` and displays:
- * - the task's `icon` and `label`,
- * - an "Entry Point" badge when `task.isEntryPoint` is true,
- * - a small badge with a coins icon and the text "TODO",
- * - and a drag-handle button for reordering.
+ * Displays the task's icon and uppercase label, an "Entry Point" badge when the task is an entry point,
+ * a credits badge showing the task's credit cost, and a drag handle. For non-entry-point tasks it
+ * also renders actions to delete the current node and to duplicate (copy) the node.
  *
- * @param taskType - The TaskType key used to resolve the task from TaskRegistry.
- * @returns A React element representing the node header.
+ * Deleting invokes the flow's deleteElements for the given nodeId. Copying reads the node via the
+ * flow's getNode, computes a new position offset by the node's measured width/height (with safe
+ * fallbacks), creates a new node with CreateFlowNode, and adds it via addNodes. If getNode returns
+ * null, the copy action is a no-op.
+ *
+ * @param taskType - Key used to resolve the task definition from TaskRegistry.
+ * @param nodeId - ID of the node this header controls (used for delete and copy actions).
+ * @returns A React element for the node header.
  */
 function NodeHeader({
   taskType,

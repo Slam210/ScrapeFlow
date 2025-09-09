@@ -4,6 +4,15 @@ import { GetWorkflowExecutions } from "@/actions/workflows/getWorkflowExecution"
 import { InboxIcon, Loader2Icon } from "lucide-react";
 import ExecutionsTable from "./_components/ExecutionsTable";
 
+/**
+ * Page component that displays all runs (executions) for a specific workflow.
+ *
+ * Renders a top bar with the workflow title and a Suspense boundary that shows a centered loading spinner
+ * while fetching and rendering the executions content.
+ *
+ * @param params.workflowId - ID of the workflow whose executions should be displayed.
+ * @returns The page React element containing the top bar and executions content.
+ */
 export default function ExecutionsPage({
   params,
 }: {
@@ -30,6 +39,16 @@ export default function ExecutionsPage({
   );
 }
 
+/**
+ * Renders the executions view for a workflow by fetching its runs and showing the appropriate UI.
+ *
+ * This async component fetches executions for `workflowId` and returns:
+ * - a simple "No data" message when the fetch result is falsy,
+ * - a friendly empty-state UI when the result is an empty array,
+ * - the ExecutionsTable (with `initialData`) when runs are present.
+ *
+ * @param workflowId - ID of the workflow whose executions should be displayed
+ */
 async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
   const executions = await GetWorkflowExecutions(workflowId);
   if (!executions) {
