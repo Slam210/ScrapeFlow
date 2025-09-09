@@ -8,6 +8,15 @@ import { useCallback } from "react";
 import useFlowValidation from "./useFlowValidation";
 import { toast } from "sonner";
 
+/**
+ * Hook that produces a function to convert the current React Flow graph into an execution plan.
+ *
+ * The returned function reads the current graph via React Flow, runs FlowToExecutionPlan, and:
+ * - On success clears validation errors and returns the generated execution plan.
+ * - On failure shows a user-facing toast message and, for invalid-input errors, marks invalid inputs in validation state.
+ *
+ * @returns A function that, when invoked, returns the computed `ExecutionPlan` or `null` if generation failed.
+ */
 function useExecutionPlan() {
   const { toObject } = useReactFlow();
   const { setInvalidInputs, clearErrors } = useFlowValidation();

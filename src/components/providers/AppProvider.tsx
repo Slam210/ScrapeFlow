@@ -7,14 +7,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NextTopLoader from "nextjs-toploader";
 
 /**
- * Provides React Query and theme contexts to its descendants and includes React Query DevTools.
+ * Provides application-level providers: a stable React Query client, theme context, a top loading bar, and React Query DevTools.
  *
- * Wraps `children` with a `QueryClientProvider` (single client instance) and a `ThemeProvider`
- * configured to use a class-based `attribute`, default to the system theme, and follow the
- * operating system color scheme. Also mounts `ReactQueryDevtools` for debugging.
+ * Wraps `children` with a single, stable `QueryClientProvider`, a `ThemeProvider` (applies themes via a CSS class, defaults to the system theme, and respects the OS color scheme), renders a top loading indicator, and mounts `ReactQueryDevtools` for debugging.
  *
- * @param children - React nodes to render within the providers.
- * @returns The provided `children` wrapped with Query and Theme providers.
+ * @param children - React nodes to render within these providers.
+ * @returns The provided `children` wrapped with Query and Theme providers, the top loader, and React Query DevTools.
  */
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());

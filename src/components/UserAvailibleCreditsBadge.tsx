@@ -8,6 +8,16 @@ import React from "react";
 import ReactCountUpWrapper from "./ReactCountUpWrapper";
 import { buttonVariants } from "./ui/button";
 
+/**
+ * Displays a link-styled badge showing the user's available credits.
+ *
+ * Renders a full-width outline button linking to "/billing" with a coins icon and the current
+ * available credits fetched via React Query (auto-refetches every 30 seconds). While loading,
+ * a spinner is shown; when a numeric value is available it is rendered via ReactCountUpWrapper;
+ * if the fetch completes with `undefined` (and not loading) a hyphen ("-") is displayed.
+ *
+ * @returns JSX element for the badge.
+ */
 export default function UserAvailibleCreditsBadge() {
   const query = useQuery({
     queryKey: ["user-availible-credits"],

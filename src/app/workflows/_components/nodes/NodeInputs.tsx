@@ -17,13 +17,16 @@ export function NodeInputs({ children }: { children: ReactNode }) {
 }
 
 /**
- * Renders a single node input row: a parameter field and an optional left-side connection handle.
+ * Render a single node input row containing a parameter field and an optional left-side connection handle.
  *
- * The rendered handle is shown when `input.hideHandle` is falsy and uses `input.name` as its id.
+ * Renders NodeParamField for the provided `input` and disables it when the input already has an incoming edge
+ * (prevents editing while connected). If `input.hideHandle` is falsy, renders a left-positioned target Handle whose
+ * `id` is `input.name`, is connectable only when not already connected, and is colorized via `ColorForHandle[input.type]`.
+ * If the input is listed in flow validation results for this node, the row receives a destructive-tinged background.
  *
- * @param input - The task parameter to render (provides the displayed field and handle visibility/id).
- * @param nodeId - The parent node's id, forwarded to the parameter field component.
- * @returns A JSX element containing the input field and, when enabled, a left-positioned target handle.
+ * @param input - The task parameter to render (provides displayed field, handle id, visibility, and type).
+ * @param nodeId - The parent node's id; forwarded to the parameter field and used to determine connection/validation state.
+ * @returns A JSX element with the parameter field and optional left target handle.
  */
 export function NodeInput({
   input,

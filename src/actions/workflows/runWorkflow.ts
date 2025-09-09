@@ -12,6 +12,25 @@ import {
 } from "@/types/workflow";
 import { auth } from "@clerk/nextjs/server";
 
+/**
+ * Creates and starts a new workflow execution from a serialized flow definition and returns its run URL.
+ *
+ * Parses the provided `flowDefinition` JSON into a flow, converts it to an execution plan, persistently
+ * creates a WorkflowExecution with initial phases (one per node) in PENDING/CREATED status, then triggers
+ * execution asynchronously.
+ *
+ * @param form - Input object containing:
+ *   - `workflowId`: ID of the workflow to run (must belong to the authenticated user).
+ *   - `flowDefinition` (optional): JSON string of the flow definition to execute.
+ * @returns The URL path to the created run: `/workflows/runs/{workflowId}/{executionId}`.
+ * @throws Error("Unauthenticated") if the caller is not authenticated.
+ * @throws Error("Workflowid is required") if `workflowId` is missing.
+ * @throws Error("Workflow not found") if no workflow with the given ID exists for the user.
+ * @throws Error("Flow definition is undefined") if `flowDefinition` is not provided.
+ * @throws Error("Flow definition not valid") if conversion to an execution plan reports an error.
+ * @throws Error("No execution plan found") if the conversion yields no execution plan.
+ * @throws Error("Workflow execution not created") if the database creation of the execution fails.
+ */
 export async function RunWorkFlow(form: {
   workflowId: string;
   flowDefinition?: string;

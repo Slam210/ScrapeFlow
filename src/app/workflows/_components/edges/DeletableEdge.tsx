@@ -10,6 +10,12 @@ import {
 } from "@xyflow/react";
 import React from "react";
 
+/**
+ * A React Flow edge component that renders a smooth-step edge with an on-edge delete control.
+ *
+ * Renders the edge path and an anchored delete button at the edge label position; clicking the button
+ * removes this edge (matching `props.id`) from the flow via the React Flow `setEdges` updater.
+ */
 export default function DeletableEdge(props: EdgeProps) {
   const [edgePath, labelX, labelY] = getSmoothStepPath(props);
   const { setEdges } = useReactFlow();

@@ -9,12 +9,12 @@ import TaskMenu from "./TaskMenu";
 import { FlowValidationContextProvider } from "@/components/context/FlowValidationContext";
 
 /**
- * Renders the workflow editor UI for a given Workflow.
+ * Render the workflow editor UI for a given Workflow.
  *
- * Wraps the editor in a ReactFlowProvider and composes Topbar and FlowEditor
- * to present and edit the provided `workflow`.
+ * Wraps the editor in FlowValidationContextProvider and ReactFlowProvider, and
+ * composes Topbar, TaskMenu, and FlowEditor to present and edit the provided workflow.
  *
- * @param workflow - The Workflow to display and edit; its `name` is used as the topbar subtitle and the object is forwarded to FlowEditor.
+ * @param workflow - Workflow to display and edit; its `name` is shown in the Topbar subtitle and the object is forwarded to FlowEditor.
  * @returns The editor's React element.
  */
 function Editor({ workflow }: { workflow: Workflow }) {

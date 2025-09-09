@@ -21,6 +21,17 @@ import { useRouter } from "next/navigation";
 
 type InitialDataType = Awaited<ReturnType<typeof GetWorkflowExecutions>>;
 
+/**
+ * Renders a table of executions for a given workflow and enables navigating to a run's detail page.
+ *
+ * Fetches executions for `workflowId` using react-query (query key ["executions", workflowId]) with
+ * `initialData` as the query's initial cache and an automatic refetch every 5 seconds.
+ * Each row is clickable and navigates to `/workflow/runs/{workflowId}/{executionId}`.
+ *
+ * @param workflowId - The workflow identifier whose executions will be listed.
+ * @param initialData - Initial query data (used as react-query's `initialData`) representing the executions array.
+ * @returns A JSX element containing the executions table.
+ */
 export default function ExecutionsTable({
   workflowId,
   initialData,

@@ -17,6 +17,20 @@ import { Edge } from "@xyflow/react";
 import { LogCollector } from "@/types/log";
 import { createLogCollector } from "../log";
 
+/**
+ * Orchestrates and runs a workflow execution identified by `executionId`.
+ *
+ * Loads the execution (including workflow and phases), builds an in-memory execution environment,
+ * marks the execution as running and all phases as pending, then executes phases in order.
+ * For each phase it wires inputs/outputs, attempts to decrement the user's credits, runs the
+ * registered executor, collects logs and outputs, and stops on the first failing phase.
+ * After all processing it finalizes the execution record (COMPLETED or FAILED), records total
+ * credits consumed, cleans up in-memory resources (e.g., browser/page), and triggers a path
+ * revalidation for "/workflows/runs".
+ *
+ * @param executionId - ID of the workflow execution to run.
+ * @throws Error if the execution with the given `executionId` is not found.
+ */
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
     where: {
@@ -74,6 +88,15 @@ export async function ExecuteWorkflow(executionId: string) {
   revalidatePath("/workflows/runs");
 }
 
+/**
+ * Mark a workflow execution as started and update the parent workflow's last-run metadata.
+ *
+ * Sets the execution's `startedAt` to now and `status` to `RUNNING`, and updates the
+ * workflow's `lastRunAt`, `lastRunStatus`, and `lastRunId` to reference this execution.
+ *
+ * @param executionId - ID of the workflow execution to mark as started
+ * @param workflowId - ID of the workflow to update with last-run information
+ */
 async function initializeWorkflowExecution(
   executionId: string,
   workflowId: string
@@ -100,6 +123,14 @@ async function initializeWorkflowExecution(
   });
 }
 
+/**
+ * Set all phases of a workflow execution to PENDING in the database.
+ *
+ * Updates the persisted ExecutionPhase records for the given execution's phases,
+ * marking each phase status as `PENDING`. The function uses the phase IDs
+ * from `execution.phases` to perform a single bulk update.
+ *
+ * @param execution - Execution object whose phases' statuses will be reset to PENDING. Only the phase `id` values are used.
 async function initializePhaseStatuses(
   execution: {
     phases: {
@@ -153,6 +184,16 @@ async function initializePhaseStatuses(
   });
 }
 
+/**
+ * Finalizes a workflow execution by setting its final status, completion time, and consumed credits; also updates the parent workflow's last run status.
+ *
+ * If `executionFailed` is true the workflow execution is marked FAILED, otherwise COMPLETED. The workflow execution record is updated with `completedAt` and `creditsConsumed`. The parent workflow's `lastRunStatus` is updated only when its `lastRunId` matches `executionId`; failures updating the parent workflow are ignored.
+ *
+ * @param executionId - ID of the workflow execution to finalize
+ * @param workflowId - ID of the parent workflow for updating its last run status
+ * @param executionFailed - Whether the execution failed; determines final status (FAILED vs COMPLETED)
+ * @param creditsConsumed - Total credits consumed by the execution (stored as a number on the execution record)
+ */
 async function finalizeWorkflowExecution(
   executionId: string,
   workflowId: string,
@@ -202,6 +243,19 @@ async function finalizeWorkflowExecution(
     .catch(() => {});
 }
 
+/**
+ * Executes a single workflow phase: prepares its environment, charges credits, runs the task, and finalizes status and logs.
+ *
+ * Prepares inputs for the phase from the workflow edges, marks the phase RUNNING, attempts to decrement the user's credits,
+ * runs the registered executor for the phase if credits were allocated, then persists outputs, logs, credits consumed and the final
+ * phase status.
+ *
+ * @param phase - The execution phase record to run (contains serialized node data).
+ * @param environment - In-memory environment holding per-phase inputs/outputs and any shared browser/page instances.
+ * @param edges - Workflow graph edges used to wire inputs from other phases' outputs.
+ * @param userId - ID of the user whose credits will be debited for this phase.
+ * @returns An object with `success` indicating whether the phase completed successfully and `creditsConsumed` equal to the amount debited.
+ */
 async function executeWorkflowPhase(
   phase: ExecutionPhase,
   environment: Environment,
@@ -260,6 +314,19 @@ async function executeWorkflowPhase(
   return { success, creditsConsumed };
 }
 
+/**
+ * Persist the final state of an execution phase (status, outputs, logs, and credits).
+ *
+ * Updates the phase record identified by `phaseId` with a completion status
+ * (COMPLETED or FAILED), completion timestamp, serialized `outputs`, `creditsConsumed`,
+ * and creates log entries from `logCollector`.
+ *
+ * @param phaseId - ID of the execution phase to finalize
+ * @param success - Whether the phase completed successfully
+ * @param outputs - Phase outputs to persist (will be JSON-stringified)
+ * @param logCollector - Collector providing log entries to store for this phase
+ * @param creditsConsumed - Number of credits charged for this phase
+ */
 async function finalizePhase(
   phaseId: string,
   success: boolean,
@@ -293,6 +360,18 @@ async function finalizePhase(
   });
 }
 
+/**
+ * Runs the registered executor for a workflow node and returns whether it succeeded.
+ *
+ * Looks up a run function by the node's task type and, if present, invokes it with a
+ * runtime ExecutionEnvironment that exposes inputs, outputs, browser/page handles, and logging.
+ *
+ * @param phase - The execution phase record being executed (used for context in logs/state).
+ * @param node - The workflow node to execute; its `data.type` selects the executor.
+ * @param environment - The in-memory environment holding per-phase inputs/outputs and browser/page.
+ * @param logCollector - Collector used by the executor to record runtime logs.
+ * @returns True if an executor was found and returned a successful result; false if no executor exists or the executor returned failure.
+ */
 async function executePhase(
   phase: ExecutionPhase,
   node: AppNode,
@@ -309,6 +388,17 @@ async function executePhase(
   return await runFn(executionEnvironment);
 }
 
+/**
+ * Initialize phase inputs and outputs in the shared environment for a given node.
+ *
+ * Ensures environment.phases[node.id] exists with `inputs` and `outputs` objects,
+ * populates inputs from the node's configured input values or from upstream phase
+ * outputs resolved via the provided edges, and skips inputs of type `BROWSER_INSTANCE`.
+ *
+ * @param node - The workflow node whose phase environment should be prepared.
+ * @param environment - The mutable in-memory environment that holds per-phase state; this function mutates `environment.phases[node.id]`.
+ * @param edges - Workflow graph edges used to resolve inputs from upstream phase outputs.
+ */
 function setupEnvironmentForPhase(
   node: AppNode,
   environment: Environment,
@@ -356,6 +446,18 @@ function setupEnvironmentForPhase(
   }
 }
 
+/**
+ * Creates an ExecutionEnvironment scoped to a specific workflow node.
+ *
+ * The returned environment provides executor helpers to read inputs for the node,
+ * write outputs back into the shared in-memory `environment.phases` store, access
+ * and mutate the shared browser/page instances, and emit logs via `logCollector`.
+ *
+ * @param node - Node whose id is used to scope inputs/outputs in `environment.phases`.
+ * @param environment - Shared in-memory execution state containing per-phase storage and browser/page.
+ * @param logCollector - Collector used by executors to record logs for this phase.
+ * @returns An ExecutionEnvironment for use by a task executor implementing WorkflowTask.
+ */
 function createExecutionEnvironment(
   node: AppNode,
   environment: Environment,
@@ -374,6 +476,13 @@ function createExecutionEnvironment(
   };
 }
 
+/**
+ * Closes the in-memory browser on the provided environment, if present.
+ *
+ * Any error thrown while closing the browser is caught and logged; the function does not rethrow.
+ *
+ * @param environment - Execution environment which may contain a Puppeteer/Playwright browser instance on `environment.browser`
+ */
 async function cleanupEnvironent(environment: Environment) {
   if (environment.browser) {
     await environment.browser
@@ -382,6 +491,15 @@ async function cleanupEnvironent(environment: Environment) {
   }
 }
 
+/**
+ * Attempt to atomically subtract a number of credits from a user's balance.
+ *
+ * If the user's balance is at least `amount`, the function decrements the balance and returns `true`.
+ * On failure (insufficient balance or an update error) it records an error via the provided log collector and returns `false`.
+ *
+ * @param amount - Number of credits to deduct from the user's balance
+ * @returns `true` if the credits were successfully decremented; otherwise `false`
+ */
 async function decrementCredits(
   userId: string,
   amount: number,

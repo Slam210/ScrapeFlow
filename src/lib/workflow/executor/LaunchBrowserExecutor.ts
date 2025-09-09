@@ -2,6 +2,14 @@ import { ExecutionEnvironment } from "@/types/executor";
 import puppeteer, { Browser } from "puppeteer";
 import { LaunchBrowserTask } from "../task/LaunchBrowser";
 
+/**
+ * Launches a headless Puppeteer browser, opens a page at the configured "Website URL", and stores the browser and page in the execution environment.
+ *
+ * On success, the created browser and page are saved into the provided execution environment and progress is logged there.
+ * On failure, the error is logged to both console and the environment log.
+ *
+ * @returns `true` if the browser was launched and the page opened successfully; `false` if an error occurred.
+ */
 export async function LaunchBrowserExecutor(
   environment: ExecutionEnvironment<typeof LaunchBrowserTask>
 ): Promise<boolean> {
