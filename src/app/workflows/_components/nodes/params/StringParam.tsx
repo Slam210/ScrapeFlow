@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { ParamProps } from "@/types/appNode";
 import React, { useEffect, useId, useState } from "react";
 
@@ -17,14 +18,21 @@ import React, { useEffect, useId, useState } from "react";
  * @param updateNodeParamValue - Callback invoked with the current string value on input blur to persist changes.
  * @returns A React element containing the labeled input and optional helper text.
  */
-function StringParam({ param, value, updateNodeParamValue }: ParamProps) {
+function StringParam({
+  param,
+  value,
+  updateNodeParamValue,
+  disabled,
+}: ParamProps) {
   const id = useId();
-
   const [internalValue, setInternalValue] = useState(value ?? "");
 
   useEffect(() => {
     setInternalValue(value ?? "");
   }, [value]);
+
+  const Component: React.ElementType =
+    param.variant === "textarea" ? Textarea : Input;
 
   return (
     <div className="space-y-1 p-1 w-full">
@@ -32,13 +40,18 @@ function StringParam({ param, value, updateNodeParamValue }: ParamProps) {
         {param.name}
         {param.required && <p className="text-red-400 px-2">*</p>}
       </Label>
-      <Input
+      <Component
         id={id}
         className="text-xs"
+        disabled={disabled}
         value={internalValue}
         placeholder="Enter value here"
-        onChange={(e) => setInternalValue(e.target.value)}
-        onBlur={(e) => updateNodeParamValue(e.target.value)}
+        onChange={(
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => setInternalValue(e.target.value)}
+        onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+          updateNodeParamValue(e.target.value)
+        }
         required={!!param.required}
       />
       {param.helperText && (

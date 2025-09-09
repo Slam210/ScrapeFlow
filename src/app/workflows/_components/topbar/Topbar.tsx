@@ -6,31 +6,35 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import SaveButton from "./SaveButton";
+import ExecuteButton from "./ExecuteButton";
+import NavigationTabs from "./NavigationTabs";
 
 interface Props {
   title: string;
   subtitle?: string;
   workflowId: string;
+  hideButtons?: boolean;
 }
 
 /**
- * Sticky top bar with a back button, title, optional subtitle, and a Save button.
+ * Sticky top bar with back navigation, a title/subtitle, navigation tabs, and optional action buttons.
  *
- * Renders a header containing:
- * - a back button that calls `router.back()` when clicked,
- * - a bold, truncated `title`,
- * - an optional, truncated `subtitle` (rendered only when provided),
- * - a right-aligned SaveButton which receives `workflowId`.
+ * Renders a header with:
+ * - a left back button that calls `router.back()`,
+ * - a bold, truncated `title` and an optional truncated `subtitle`,
+ * - centered `NavigationTabs` for the given `workflowId`,
+ * - right-aligned action buttons (`ExecuteButton` and `SaveButton`) that receive `workflowId` and are shown unless `hideButtons` is true.
  *
- * @param title - Visible main title text.
- * @param subtitle - Optional secondary line displayed under the title.
- * @param workflowId - Identifier forwarded to the SaveButton for save actions.
+ * @param title - Main title text displayed prominently.
+ * @param subtitle - Optional secondary line shown under the title when provided.
+ * @param workflowId - Workflow identifier forwarded to NavigationTabs, ExecuteButton, and SaveButton.
+ * @param hideButtons - When true, hides the right-aligned Execute and Save buttons; defaults to false.
  */
-function Topbar({ title, subtitle, workflowId }: Props) {
+function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
   const router = useRouter();
 
   return (
-    <header className="flex p-2 border-p-2 border-seperate justify-between w-full h-[60px] sticky top-0 bg-background z-10">
+    <header className="flex p-2 border-b-2 border-seperate justify-between w-full h-[60px] sticky top-0 bg-background z-10">
       <div className="flex gap-1 flex-1">
         <TooltipWrapper content="Back">
           <Button variant={"ghost"} size={"icon"} onClick={() => router.back()}>
@@ -44,8 +48,14 @@ function Topbar({ title, subtitle, workflowId }: Props) {
           )}
         </div>
       </div>
+      <NavigationTabs workflowId={workflowId} />
       <div className="flex gap-1 flex-1 justify-end">
-        <SaveButton workflowId={workflowId} />
+        {!hideButtons && (
+          <>
+            <ExecuteButton workflowId={workflowId} />
+            <SaveButton workflowId={workflowId} />
+          </>
+        )}
       </div>
     </header>
   );

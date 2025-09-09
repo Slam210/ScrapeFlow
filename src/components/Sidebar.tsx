@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import UserAvailibleCreditsBadge from "./UserAvailibleCreditsBadge";
 
 const routes = [
   {
@@ -60,6 +61,9 @@ export function DesktopSidebar() {
       <div className="flex items-center justify-center gap-2 border-b-[1px] border-separate p-4">
         <Logo />
       </div>
+      <div className="p-2">
+        <UserAvailibleCreditsBadge />
+      </div>
       <div className="flex flex-col p-2">
         {routes.map((route) => (
           <Link
@@ -82,21 +86,16 @@ export function DesktopSidebar() {
 }
 
 /**
- * Mobile sidebar navigation that renders a left-side sheet with the app routes.
+ * Mobile-only sidebar: a hamburger-triggered left sheet that displays the app logo, available-credits badge, and route links.
  *
- * Renders a hamburger button that opens a left-anchored Sheet containing the Logo and a vertical list of route links.
- * The component is designed for small screens only (hidden at md+). It determines the active route by finding the first
- * route with a non-empty `href` whose value is included in the current pathname; if none matches it falls back to
- * the first entry in `routes` (note: the Home route with an empty `href` is excluded from active-route matching).
+ * The sheet opens via an internal `isOpen` state controlled by the hamburger button. The active route is the first
+ * non-root route whose `href` is a prefix of the current pathname; if none match, the first route in `routes` is used.
+ * Clicking a route link closes the sheet.
  *
- * State:
- * - Maintains internal `isOpen` state to control the Sheet visibility. Clicking a route link toggles `isOpen` to close the sheet.
+ * Each route link renders its icon (size 20) and label, and applies `buttonVariants` with `sidebarActiveItem` for the
+ * active route or `sidebarItem` otherwise.
  *
- * Rendering notes:
- * - Each route link uses `route.href` and `route.label`, renders `route.icon` at size 20, and applies styling via `buttonVariants`
- *   using `sidebarActiveItem` for the active route and `sidebarItem` otherwise.
- *
- * @returns The mobile sidebar component as JSX.
+ * @returns JSX element for the mobile sidebar sheet.
  */
 export function MobileSidebar() {
   const pathName = usePathname();
@@ -121,6 +120,7 @@ export function MobileSidebar() {
             side={"left"}
           >
             <Logo />
+            <UserAvailibleCreditsBadge />
             <div className="flex flex-col gap-1">
               {routes.map((route) => (
                 <Link

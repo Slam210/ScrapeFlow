@@ -5,30 +5,35 @@ import React from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import FlowEditor from "./FlowEditor";
 import Topbar from "./topbar/Topbar";
+import TaskMenu from "./TaskMenu";
+import { FlowValidationContextProvider } from "@/components/context/FlowValidationContext";
 
 /**
- * Renders the workflow editor UI for a given Workflow.
+ * Render the workflow editor UI for a given Workflow.
  *
- * Wraps the editor in a ReactFlowProvider and composes Topbar and FlowEditor
- * to present and edit the provided `workflow`.
+ * Wraps the editor in FlowValidationContextProvider and ReactFlowProvider, and
+ * composes Topbar, TaskMenu, and FlowEditor to present and edit the provided workflow.
  *
- * @param workflow - The Workflow to display and edit; its `name` is used as the topbar subtitle and the object is forwarded to FlowEditor.
+ * @param workflow - Workflow to display and edit; its `name` is shown in the Topbar subtitle and the object is forwarded to FlowEditor.
  * @returns The editor's React element.
  */
 function Editor({ workflow }: { workflow: Workflow }) {
   return (
-    <ReactFlowProvider>
-      <div className="flex flex-col h-full w-full overflow-hidden">
-        <Topbar
-          title="Workflow editor"
-          subtitle={workflow.name}
-          workflowId={workflow.id}
-        />
-        <section className="flex h-full overflow-auto">
-          <FlowEditor workflow={workflow} />
-        </section>
-      </div>
-    </ReactFlowProvider>
+    <FlowValidationContextProvider>
+      <ReactFlowProvider>
+        <div className="flex flex-col h-full w-full overflow-hidden">
+          <Topbar
+            title="Workflow editor"
+            subtitle={workflow.name}
+            workflowId={workflow.id}
+          />
+          <section className="flex h-full overflow-auto">
+            <TaskMenu />
+            <FlowEditor workflow={workflow} />
+          </section>
+        </div>
+      </ReactFlowProvider>
+    </FlowValidationContextProvider>
   );
 }
 

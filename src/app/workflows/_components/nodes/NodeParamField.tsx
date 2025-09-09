@@ -5,24 +5,27 @@ import React, { useCallback } from "react";
 import StringParam from "./params/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
+import BrowserInstanceParam from "./params/BrowserInstanceParam";
 
 /**
- * Renders an editor control for a single node parameter and wires updates into React Flow.
+ * Render an editor control for a single node parameter and propagate edits into React Flow.
  *
- * Renders a parameter control based on `param.type` (currently supports `TaskParamType.STRING` via
- * the `StringParam` component). When the parameter value changes, the component updates the
- * corresponding entry in the node's `data.inputs` using React Flow's `updateNodeData`.
+ * The component chooses a control by `param.type` (e.g., `STRING` → `StringParam`, `BROWSER_INSTANCE` →
+ * `BrowserInstanceParam`) and updates the node's `data.inputs` via React Flow's `updateNodeData` when
+ * the parameter value changes. If the target node cannot be found, the component renders `null`.
  *
- * @param param - The task parameter definition to render (name, type, metadata).
- * @param nodeId - The React Flow node id whose `data.inputs` contains the parameter value.
- * @returns A JSX element for the parameter editor.
+ * @param param - Task parameter definition (name, type, metadata) to render.
+ * @param nodeId - React Flow node id whose `data.inputs` holds the parameter value.
+ * @returns A JSX element for the parameter editor, or `null` when the node is missing.
  */
 function NodeParamField({
   param,
   nodeId,
+  disabled,
 }: {
   param: TaskParam;
   nodeId: string;
+  disabled: boolean;
 }) {
   const { getNode, updateNodeData } = useReactFlow();
   const node = getNode(nodeId) as AppNode;
@@ -52,6 +55,15 @@ function NodeParamField({
         <StringParam
           param={param}
           value={value ?? ""}
+          updateNodeParamValue={updateNodeParamValue}
+          disabled={disabled}
+        />
+      );
+    case TaskParamType.BROWSER_INSTANCE:
+      return (
+        <BrowserInstanceParam
+          param={param}
+          value={""}
           updateNodeParamValue={updateNodeParamValue}
         />
       );
