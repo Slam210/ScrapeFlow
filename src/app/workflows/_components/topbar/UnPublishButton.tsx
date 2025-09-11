@@ -8,6 +8,17 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Renders an "Unpublish" button that unpublishes the specified workflow when clicked.
+ *
+ * When clicked the button shows a loading toast, triggers the unpublish mutation, and:
+ * - on success: shows a success toast scoped to `workflowId` and navigates to the URL returned by the mutation.
+ * - on error: shows an error toast scoped to `workflowId`.
+ * The button is disabled while the unpublish mutation is in progress.
+ *
+ * @param workflowId - The id of the workflow to unpublish; also used to scope toast messages.
+ * @returns A React element for the unpublish button.
+ */
 export default function UnPublishButton({
   workflowId,
 }: {

@@ -22,6 +22,17 @@ import CronExpressionParser from "cron-parser";
 import { RemoveWorkflowSchedule } from "@/actions/workflows/removeWorkflowSchedule";
 import { Separator } from "@/components/ui/separator";
 
+/**
+ * Dialog component for viewing, validating, setting, saving, and removing a cron schedule for a workflow.
+ *
+ * Renders a trigger showing the currently saved schedule (or a "Set Schedule" prompt), an input for editing
+ * a cron expression, a live validity/readable preview (uses cron-parser and cronstrue), and actions to save
+ * or remove the schedule. On save/remove it invokes the corresponding server mutations and navigates to the
+ * returned URL on success while showing toast feedback.
+ *
+ * @param props.cron - The current cron expression for the workflow, or null if none is set.
+ * @param props.workflowId - The workflow identifier used when saving or removing the schedule.
+ */
 export default function ScheduleDialog(props: {
   cron: string | null;
   workflowId: string;

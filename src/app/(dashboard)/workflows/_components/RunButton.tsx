@@ -7,6 +7,14 @@ import { PlayIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Button that starts a workflow run and shows toast feedback.
+ *
+ * Shows a loading toast, triggers the RunWorkFlow mutation, and updates the toast on success or error.
+ *
+ * @param workflowId - ID of the workflow to run; also used as the toast identifier so messages replace/clear correctly.
+ * @returns A small outlined Button containing a play icon and the label "Run".
+ */
 export default function RunButton({ workflowId }: { workflowId: string }) {
   const mutation = useMutation({
     mutationFn: RunWorkFlow,
