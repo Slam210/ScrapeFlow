@@ -9,6 +9,7 @@ import {
   WorkflowExecutionPlan,
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
+  WorkflowStatus,
 } from "@/types/workflow";
 import { auth } from "@clerk/nextjs/server";
 
@@ -60,19 +61,29 @@ export async function RunWorkFlow(form: {
     throw new Error("Flow definition is undefined");
   }
 
-  const flow = JSON.parse(flowDefinition);
+  let executionPlan: WorkflowExecutionPlan;
+  let workflowExecution = flowDefinition;
 
-  const result = FlowToExecutionPlan(flow.nodes, flow.edges);
+  if (workflow.status === WorkflowStatus.PUBLISHED) {
+    if (!workflow.executionPlan) {
+      throw new Error("No execution plan found in published workflows");
+    }
+    executionPlan = JSON.parse(workflow.executionPlan);
+    workflowExecution = workflow.definition;
+  } else {
+    const flow = JSON.parse(flowDefinition);
 
-  if (result.error) {
-    throw new Error("Flow definition not valid");
+    const result = FlowToExecutionPlan(flow.nodes, flow.edges);
+
+    if (result.error) {
+      throw new Error("Flow definition not valid");
+    }
+
+    if (!result.executionPlan) {
+      throw new Error("No execution plan found");
+    }
+    executionPlan = result.executionPlan;
   }
-
-  if (!result.executionPlan) {
-    throw new Error("No execution plan found");
-  }
-
-  const executionPlan: WorkflowExecutionPlan = result.executionPlan;
 
   const execution = await prisma.workflowExecution.create({
     data: {
@@ -81,7 +92,7 @@ export async function RunWorkFlow(form: {
       status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
       trigger: WorkflowExecutionTrigger.MANUAL,
-      definition: flowDefinition,
+      definition: workflowExecution,
       phases: {
         create: executionPlan.flatMap((phase) => {
           return phase.nodes.flatMap((node) => {

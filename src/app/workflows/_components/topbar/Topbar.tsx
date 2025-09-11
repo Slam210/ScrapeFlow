@@ -8,12 +8,15 @@ import React from "react";
 import SaveButton from "./SaveButton";
 import ExecuteButton from "./ExecuteButton";
 import NavigationTabs from "./NavigationTabs";
+import PublishButton from "./PublishButton";
+import UnPublishButton from "./UnPublishButton";
 
 interface Props {
   title: string;
   subtitle?: string;
   workflowId: string;
   hideButtons?: boolean;
+  isPublished?: boolean;
 }
 
 /**
@@ -30,7 +33,13 @@ interface Props {
  * @param workflowId - Workflow identifier forwarded to NavigationTabs, ExecuteButton, and SaveButton.
  * @param hideButtons - When true, hides the right-aligned Execute and Save buttons; defaults to false.
  */
-function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
+function Topbar({
+  title,
+  subtitle,
+  workflowId,
+  hideButtons = false,
+  isPublished = false,
+}: Props) {
   const router = useRouter();
 
   return (
@@ -53,7 +62,13 @@ function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
         {!hideButtons && (
           <>
             <ExecuteButton workflowId={workflowId} />
-            <SaveButton workflowId={workflowId} />
+            {isPublished && <UnPublishButton workflowId={workflowId} />}
+            {!isPublished && (
+              <>
+                <SaveButton workflowId={workflowId} />
+                <PublishButton workflowId={workflowId} />
+              </>
+            )}
           </>
         )}
       </div>

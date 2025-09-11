@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
+import RunButton from "./RunButton";
 
 const statusColors = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -77,6 +78,7 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
           </div>
         </div>
         <div className="flex items-center space-x-2">
+          {isDraft && <RunButton workflowId={workflow.id} />}
           <Link
             href={`/workflows/editor/${workflow.id}`}
             className={cn(
