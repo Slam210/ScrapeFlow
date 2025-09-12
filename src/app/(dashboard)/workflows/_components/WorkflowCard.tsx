@@ -32,7 +32,10 @@ import RunButton from "./RunButton";
 import ScheduleDialog from "./ScheduleDialog";
 import TooltipWrapper from "@/components/TooltipWrapper";
 import { Badge } from "@/components/ui/badge";
-import ExecutionStatusIndicator from "@/app/workflows/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import {
+  ExecutionStatusIndicator,
+  ExecutionStatusLabel,
+} from "@/app/workflows/runs/[workflowId]/_components/ExecutionStatusIndicator";
 import { format, formatDistanceToNow } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 
@@ -244,7 +247,9 @@ function LastRunDetails({ workflow }: { workflow: Workflow }) {
             <ExecutionStatusIndicator
               status={lastRunStatus as WorkflowExecutionStatus}
             />
-            <span>{lastRunStatus}</span>
+            <ExecutionStatusLabel
+              status={lastRunStatus as WorkflowExecutionStatus}
+            />{" "}
             <span>{formattedStartedAt}</span>
             <ChevronRightIcon
               size={14}
