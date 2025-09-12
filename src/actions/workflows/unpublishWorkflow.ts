@@ -12,13 +12,10 @@ export async function UnPublishWorkflow({ id }: { id: string }) {
   }
 
   const workflow = await prisma.workflow.findUnique({
-    where: {
-      id,
-      userId,
-    },
+    where: { id },
   });
 
-  if (!workflow) {
+  if (!workflow || workflow.userId !== userId) {
     throw new Error("Workflow not found");
   }
 
@@ -27,10 +24,7 @@ export async function UnPublishWorkflow({ id }: { id: string }) {
   }
 
   await prisma.workflow.update({
-    where: {
-      id,
-      userId,
-    },
+    where: { id },
     data: {
       status: WorkflowStatus.DRAFT,
       executionPlan: null,

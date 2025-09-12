@@ -18,7 +18,7 @@ export default function PublishButton({ workflowId }: { workflowId: string }) {
   const mutation = useMutation({
     mutationFn: PublishWorkflow,
     onSuccess: (url: string) => {
-      toast.success("Workflow poublished", { id: workflowId });
+      toast.success("Workflow published", { id: workflowId });
       router.push(url);
     },
     onError: () => {

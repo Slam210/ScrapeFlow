@@ -19,7 +19,7 @@ export async function PublishWorkflow({
     throw new Error("unauthenticated");
   }
 
-  const workflow = await prisma.workflow.findUnique({
+  const workflow = await prisma.workflow.findFirst({
     where: {
       id,
       userId,
@@ -34,7 +34,15 @@ export async function PublishWorkflow({
     throw new Error("Workflow is not a draft");
   }
 
-  const flow = JSON.parse(flowDefinition);
+  let flow;
+  try {
+    flow = JSON.parse(flowDefinition);
+  } catch {
+    throw new Error("Invalid flowDefinition JSON");
+  }
+  if (!Array.isArray(flow?.nodes) || !Array.isArray(flow?.edges)) {
+    throw new Error("Flow definition must include nodes and edges arrays");
+  }
   const result = FlowToExecutionPlan(flow.nodes, flow.edges);
 
   if (result.error) {

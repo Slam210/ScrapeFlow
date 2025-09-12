@@ -6,12 +6,15 @@ import { useMutation } from "@tanstack/react-query";
 import { PlayIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function RunButton({ workflowId }: { workflowId: string }) {
+  const router = useRouter();
   const mutation = useMutation({
     mutationFn: RunWorkFlow,
-    onSuccess: () => {
+    onSuccess: (url: string) => {
       toast.success("Workflow started", { id: workflowId });
+      router.push(url);
     },
     onError: () => {
       toast.error("Something went wrong", { id: workflowId });
@@ -24,7 +27,7 @@ export default function RunButton({ workflowId }: { workflowId: string }) {
       className="flex items-center gap-2"
       disabled={mutation.isPending}
       onClick={() => {
-        toast.loading("Scedhuling run...", { id: workflowId });
+        toast.loading("Scheduling run...", { id: workflowId });
         mutation.mutate({
           workflowId,
         });

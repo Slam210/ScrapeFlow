@@ -11,6 +11,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model Workflow {
   id String @id @default(cuid())
   userId String
@@ -23,7 +28,7 @@ model Workflow {
 
   cron String?
   
-  status String
+  status WorkflowStatus
 
   lastRunAt DateTime?
   lastRunId String?

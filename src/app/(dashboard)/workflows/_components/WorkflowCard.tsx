@@ -90,7 +90,7 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          {isDraft && <RunButton workflowId={workflow.id} />}
+          {!isDraft && <RunButton workflowId={workflow.id} />}
           <Link
             href={`/workflows/editor/${workflow.id}`}
             className={cn(

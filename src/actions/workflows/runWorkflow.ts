@@ -57,10 +57,6 @@ export async function RunWorkFlow(form: {
     throw new Error("Workflow not found");
   }
 
-  if (!flowDefinition) {
-    throw new Error("Flow definition is undefined");
-  }
-
   let executionPlan: WorkflowExecutionPlan;
   let workflowExecution = flowDefinition;
 
@@ -71,6 +67,9 @@ export async function RunWorkFlow(form: {
     executionPlan = JSON.parse(workflow.executionPlan);
     workflowExecution = workflow.definition;
   } else {
+    if (!flowDefinition) {
+      throw new Error("Flow definition is undefined");
+    }
     const flow = JSON.parse(flowDefinition);
 
     const result = FlowToExecutionPlan(flow.nodes, flow.edges);

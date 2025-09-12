@@ -97,7 +97,7 @@ export default function ScheduleDialog(props: {
         />
         <div className="p-6 space-y-4">
           <p className="text-muted-foreground text-sm">
-            Specify a cron expression to schedule periodic workflow exectution.
+            Specify a cron expression to schedule periodic workflow execution.
             All times are in UTC
           </p>
           <Input
