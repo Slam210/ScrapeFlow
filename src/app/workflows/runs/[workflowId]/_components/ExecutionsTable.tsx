@@ -13,7 +13,7 @@ import {
 import { DatesToDurationString } from "@/lib/helper/dates";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { ExecutionStatusIndicator } from "./ExecutionStatusIndicator";
+import ExecutionStatusIndicator from "./ExecutionStatusIndicator";
 import { WorkflowExecutionStatus } from "@/types/workflow";
 import { CoinsIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
