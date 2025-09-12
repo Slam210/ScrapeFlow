@@ -2,10 +2,12 @@
 
 import { Workflow } from "@/generated/prisma";
 import React, { useState } from "react";
-import { WorkflowStatus } from "@/types/workflow";
+import { WorkflowExecutionStatus, WorkflowStatus } from "@/types/workflow";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
+  ChevronRightIcon,
+  ClockIcon,
   CoinsIcon,
   CornerDownRightIcon,
   FileTextIcon,
@@ -30,6 +32,13 @@ import RunButton from "./RunButton";
 import ScheduleDialog from "./ScheduleDialog";
 import TooltipWrapper from "@/components/TooltipWrapper";
 import { Badge } from "@/components/ui/badge";
+import {
+  ExecutionStatusIndicator,
+  ExecutionStatusLabel,
+} from "@/app/workflows/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import { format, formatDistanceToNow } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
+import DuplicateWorkflowDialog from "./DuplicateWorkflowDialog";
 
 const statusColors = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -41,21 +50,24 @@ interface WorkflowCardProps {
 }
 
 /**
- * Render a dashboard card for a single workflow showing status, title, and actions.
+ * Render a dashboard card for a single workflow, showing its status, title, actions, schedule, and last-run details.
  *
- * Renders a circular status indicator (Draft or Published), a link to the workflow editor, and action controls:
- * - For drafts: shows a "Draft" badge and a Run button.
- * - For published workflows: shows scheduling controls (via ScheduleSection) and a credit-cost badge when applicable.
- * Also includes an Edit link and a "More actions" menu that exposes deletion.
+ * The card displays:
+ * - A circular status indicator (icon and color vary by WorkflowStatus).
+ * - The workflow name as a link to the editor with a tooltip showing the description.
+ * - A "Draft" badge when the workflow is a draft and a Duplicate action next to the title.
+ * - Scheduling controls and a credits-cost badge when the workflow is published (ScheduleSection is omitted for drafts).
+ * - Action controls on the right: a Run button (only for non-drafts), an Edit link, and a "More actions" menu (including Delete).
+ * - Last run and next scheduled run details rendered by LastRunDetails (hidden for drafts).
  *
- * @param workflow - Workflow to render; must include `id`, `name`, `status`, and may include `creditsCost` and `cron`.
- * @returns The JSX element for the workflow card.
+ * @param workflow - Workflow to render; must include `id`, `name`, and `status`. Optional fields used when present: `creditsCost`, `cron`, `lastRunAt`, `lastRunStatus`, `nextRunAt`, and `description`.
+ * @returns The JSX element representing the workflow card.
  */
 function WorkflowCard({ workflow }: WorkflowCardProps) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
 
   return (
-    <Card className="border border-seperate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary">
+    <Card className="border border-seperate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary group/card">
       <CardContent className="p-4 flex items-center justify-between h-[100px]">
         <div className="flex items-center justify-end space-x-3">
           <div
@@ -71,18 +83,21 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
             )}
           </div>
           <div>
-            <h3 className="text-base font-bold text-muted-foreground flex">
-              <Link
-                href={`/workflows/editor/${workflow.id}`}
-                className="flex items-center hover:underline"
-              >
-                {workflow.name}
-              </Link>
+            <h3 className="text-base font-bold text-muted-foreground flex items-center">
+              <TooltipWrapper content={workflow.description}>
+                <Link
+                  href={`/workflows/editor/${workflow.id}`}
+                  className="flex items-center hover:underline"
+                >
+                  {workflow.name}
+                </Link>
+              </TooltipWrapper>
               {isDraft && (
                 <span className="ml-2 px-2 py-0.5 text-sm font-medium bg-yellow-100 text-yellow-800 rounded-full">
                   Draft
                 </span>
               )}
+              <DuplicateWorkflowDialog workflowId={workflow.id} />
             </h3>
             <ScheduleSection
               isDraft={isDraft}
@@ -110,6 +125,7 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
           />
         </div>
       </CardContent>
+      <LastRunDetails workflow={workflow} />
     </Card>
   );
 }
@@ -164,17 +180,18 @@ function WorkflowActions({
 }
 
 /**
- * Renders the schedule controls and a credit-cost badge for a non-draft workflow.
+ * Render schedule controls and a credit-cost badge for a non-draft workflow.
  *
- * Returns null for draft workflows. When rendered, the component displays
- * schedule-related icons, a ScheduleDialog (remounted when `cron` or `workflowId` changes),
- * and a badge showing the estimated `creditsCost` for a full run.
+ * Renders a compact row with scheduling icons, a ScheduleDialog (keyed to
+ * `${cron}-${workflowId}` so it remounts when `cron` or `workflowId` change),
+ * and a badge showing the estimated `creditsCost` for a full run. Returns null
+ * when `isDraft` is true.
  *
- * @param isDraft - true to skip rendering (workflow is a draft)
- * @param creditsCost - estimated credit consumption for a full workflow run
- * @param workflowId - workflow identifier passed to the schedule dialog
- * @param cron - cron schedule string for the workflow; may be null
- * @returns A JSX element containing schedule controls and a credit badge, or null for drafts.
+ * @param isDraft - If true, nothing is rendered
+ * @param creditsCost - Estimated credit consumption for a full workflow run
+ * @param workflowId - Workflow identifier passed to the ScheduleDialog
+ * @param cron - Cron schedule string for the workflow; may be null
+ * @returns JSX element with schedule controls and a credit badge, or null for drafts.
  */
 function ScheduleSection({
   isDraft,
@@ -208,6 +225,69 @@ function ScheduleSection({
           </Badge>
         </div>
       </TooltipWrapper>
+    </div>
+  );
+}
+
+/**
+ * Renders last-run and next-schedule details for a workflow card.
+ *
+ * Shows a linked "Last run" section with an execution status indicator and a relative
+ * start time when the workflow has at least one run; otherwise displays "No runs yet".
+ * Also shows the next scheduled run time (local formatted as `yyyy-MM-dd HH:mm`) and
+ * the UTC time (`HH:mm`) when a next run is scheduled.
+ *
+ * If the workflow is a draft (status === WorkflowStatus.DRAFT), this component renders nothing.
+ *
+ * @param workflow - The workflow whose last run and next schedule are displayed.
+ */
+function LastRunDetails({ workflow }: { workflow: Workflow }) {
+  const isDraft = workflow.status === WorkflowStatus.DRAFT;
+  const { lastRunAt, lastRunStatus, lastRunId, nextRunAt } = workflow;
+  const formattedStartedAt =
+    lastRunAt && formatDistanceToNow(lastRunAt, { addSuffix: true });
+
+  const NextSchedule = nextRunAt && format(nextRunAt, "yyyy-MM-dd HH:mm");
+  const NextScheduleUTC =
+    nextRunAt && formatInTimeZone(nextRunAt, "UTC", "HH:mm");
+
+  if (isDraft) {
+    return;
+  }
+
+  return (
+    <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">
+      <div className="flex items-center text-sm gap-2">
+        {lastRunAt ? (
+          <Link
+            href={`/workflows/runs/${lastRunId}`}
+            className="flex items-center text-sm gap-2 group"
+          >
+            <span>Last run:</span>
+            <ExecutionStatusIndicator
+              status={lastRunStatus as WorkflowExecutionStatus}
+            />
+            <ExecutionStatusLabel
+              status={lastRunStatus as WorkflowExecutionStatus}
+            />{" "}
+            <span>{formattedStartedAt}</span>
+            <ChevronRightIcon
+              size={14}
+              className="-translate-x-[2px] group-hover:translate-x-0 transition"
+            />
+          </Link>
+        ) : (
+          <p>No runs yet</p>
+        )}
+      </div>
+      {nextRunAt && (
+        <div className="flex items-center text-sm gap-2">
+          <ClockIcon size={12} />
+          <span>Next run at:</span>
+          <span>{NextSchedule}</span>
+          <span className="text-xs">({NextScheduleUTC} UTC)</span>
+        </div>
+      )}
     </div>
   );
 }
