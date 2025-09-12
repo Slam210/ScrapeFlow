@@ -10,6 +10,15 @@ import {
 import CronExpressionParser from "cron-parser";
 import { timingSafeEqual } from "crypto";
 
+/**
+ * Validates a provided secret against the process environment API_SECRET using a timing-safe comparison.
+ *
+ * Returns true only if API_SECRET is set and `secret` matches it exactly (compared with a timing-safe equality).
+ * Returns false if API_SECRET is missing, the values do not match, or an error occurs during comparison.
+ *
+ * @param secret - The secret value supplied by the caller to validate.
+ * @returns Whether the supplied `secret` matches the `API_SECRET` environment variable.
+ */
 function isValidSecret(secret: string) {
   const API_SECRET = process.env.API_SECRET;
   if (!API_SECRET) return false;
@@ -21,6 +30,22 @@ function isValidSecret(secret: string) {
   }
 }
 
+/**
+ * HTTP GET handler that authenticates a secret and triggers a cron-scheduled workflow execution.
+ *
+ * Validates a Bearer token from the Authorization header against the server secret, requires a
+ * `workflowId` query parameter, loads the workflow and its stored execution plan, computes the
+ * next run time from the workflow's cron expression, creates a new pending workflowExecution with
+ * nested phases (validated against the TaskRegistry), and invokes the workflow runner.
+ *
+ * Returns:
+ * - 200 on successful scheduling and start.
+ * - 401 if the Authorization header is missing/invalid or the secret check fails.
+ * - 400 if `workflowId` is missing or the workflow/execution plan cannot be loaded/parsed.
+ * - 500 for internal errors (including unknown task types encountered while building phases).
+ *
+ * @param request - The incoming Request object containing headers and URL search parameters.
+ */
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
 
