@@ -11,19 +11,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model Workflow {
   id String @id @default(cuid())
   userId String
   name String
   description String?
+  
   definition String
-  status String
+  executionPlan String?
+  creditsCost Int @default(0)
+
+  cron String?
+  
+  status WorkflowStatus
+
   lastRunAt DateTime?
   lastRunId String?
   lastRunStatus String?
+  nextRunAt DateTime?
+  
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
+  
   @@unique([name, userId])
+  
   executions WorkflowExecution[]
 }
 
