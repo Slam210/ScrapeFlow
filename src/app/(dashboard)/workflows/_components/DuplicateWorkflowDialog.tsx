@@ -58,8 +58,8 @@ function DuplicateWorkflowDialog({ workflowId }: { workflowId: string }) {
     mutationFn: DuplicateWorkflow,
     onSuccess: (url) => {
       toast.success("Workflow duplicated", { id: "duplicate-workflow" });
-      router.push(`${url}`);
       setOpen((prev) => !prev);
+      router.push(`${url}`);
     },
     onError: () => {
       toast.error("Failed to duplicate workflow", { id: "duplicate-workflow" });

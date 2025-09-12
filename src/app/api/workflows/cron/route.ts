@@ -15,7 +15,15 @@ import { WorkflowStatus } from "@/types/workflow";
  *
  * @returns A JSON Response with shape `{ workflowsToRun: number }` and HTTP status 200.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = request.headers.get("authorization");
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const secret = auth.split(" ")[1];
+  if (!process.env.API_SECRET || secret !== process.env.API_SECRET) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const now = new Date();
   const workflows = await prisma.workflow.findMany({
     select: { id: true },
@@ -49,6 +57,14 @@ function triggerWorkflow(workflowId: string) {
     `api/workflows/execute?workflowId=${workflowId}`
   );
   //   console.log(triggerApiUrl);
+  if (!process.env.API_SECRET) {
+    console.error("API_SECRET is not set; skipping trigger.");
+    return;
+  }
+  if (!triggerApiUrl || triggerApiUrl.includes("undefined")) {
+    console.error("App URL is not configured; skipping trigger.");
+    return;
+  }
   fetch(triggerApiUrl, {
     headers: {
       Authorization: `Bearer ${process.env.API_SECRET!}`,

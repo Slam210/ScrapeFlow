@@ -34,8 +34,9 @@ export async function DuplicateWorkflow(form: duplicateWorkflowSchemaType) {
     throw new Error("Unauthenticated");
   }
 
-  const sourceWorkflow = await prisma.workflow.findUnique({
+  const sourceWorkflow = await prisma.workflow.findFirst({
     where: { id: data.workflowId, userId },
+    select: { definition: true },
   });
 
   if (!sourceWorkflow) {

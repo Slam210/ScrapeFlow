@@ -73,9 +73,16 @@ export async function GET(request: Request) {
     return Response.json({ error: "Bad Request" }, { status: 400 });
   }
 
-  const executionPlan = JSON.parse(
-    workflow.executionPlan!
-  ) as WorkflowExecutionPlan;
+  const rawPlan = workflow.executionPlan;
+  if (!rawPlan) {
+    return Response.json({ error: "Bad Request" }, { status: 400 });
+  }
+  let executionPlan: WorkflowExecutionPlan;
+  try {
+    executionPlan = JSON.parse(rawPlan) as WorkflowExecutionPlan;
+  } catch {
+    return Response.json({ error: "Bad Request" }, { status: 400 });
+  }
 
   if (!executionPlan) {
     return Response.json({ error: "Bad Request" }, { status: 400 });
@@ -88,6 +95,9 @@ export async function GET(request: Request) {
       strict: true,
     };
 
+    if (!workflow.cron) {
+      return Response.json({ error: "Bad Request" }, { status: 400 });
+    }
     const cron = CronExpressionParser.parse(workflow.cron as string, options);
     const nextRun = cron.next().toDate();
     const execution = await prisma.workflowExecution.create({
@@ -118,8 +128,14 @@ export async function GET(request: Request) {
       },
     });
 
-    await ExecuteWorkflow(execution.id, nextRun);
-    return new Response(null, { status: 200 });
+    // schedule asynchronously; return immediately
+    queueMicrotask(() => {
+      // Best-effort; log errors
+      ExecuteWorkflow(execution.id, nextRun).catch((e) =>
+        console.error("ExecuteWorkflow failed", e)
+      );
+    });
+    return new Response(null, { status: 202 });
   } catch {
     return Response.json({ error: "Internal Server Error" }, { status: 500 });
   }

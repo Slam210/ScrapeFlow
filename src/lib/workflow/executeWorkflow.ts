@@ -415,7 +415,7 @@ function setupEnvironmentForPhase(
   for (const input of inputs) {
     if (input.type === TaskParamType.BROWSER_INSTANCE) continue;
     const inputValue = node.data.inputs[input.name];
-    if (inputValue) {
+    if (Object.prototype.hasOwnProperty.call(node.data.inputs, input.name)) {
       environment.phases[node.id].inputs[input.name] = inputValue;
       continue;
     }

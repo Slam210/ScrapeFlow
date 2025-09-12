@@ -12,6 +12,12 @@
  * @returns The concatenated URL string combining the environment base URL and `path`
  */
 export function getAppUrl(path: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  return `${appUrl}/${path}`;
+  const base =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : "");
+  if (!base) {
+    throw new Error("NEXT_PUBLIC_APP_URL is not set");
+  }
+  // new URL handles leading/trailing slashes robustly
+  return new URL(path, base.endsWith("/") ? base : `${base}/`).toString();
 }

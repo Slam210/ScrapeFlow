@@ -200,11 +200,12 @@ function ScheduleSection({
   cron,
 }: {
   isDraft: boolean;
-  creditsCost: number;
+  creditsCost: number | null | undefined;
   workflowId: string;
   cron: string | null;
 }) {
   if (isDraft) return null;
+  const displayCredits = creditsCost ?? 0;
   return (
     <div className="flex items-center gap-2">
       <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
@@ -218,10 +219,10 @@ function ScheduleSection({
         <div className="flex items-center gap-3">
           <Badge
             variant={"outline"}
-            className="space-x-2 text-muted-foreground rouded-sm"
+            className="space-x-2 text-muted-foreground rounded-sm"
           >
             <CoinsIcon className="h-4 w-4" />
-            <span className="text-sm">{creditsCost}</span>
+            <span className="text-sm">{displayCredits}</span>
           </Badge>
         </div>
       </TooltipWrapper>
@@ -244,48 +245,74 @@ function ScheduleSection({
 function LastRunDetails({ workflow }: { workflow: Workflow }) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
   const { lastRunAt, lastRunStatus, lastRunId, nextRunAt } = workflow;
+  // Normalize potential string dates at the client boundary
+  const startedAt = lastRunAt
+    ? new Date(lastRunAt as unknown as Date | string | number)
+    : null;
+  const nextAt = nextRunAt
+    ? new Date(nextRunAt as unknown as Date | string | number)
+    : null;
   const formattedStartedAt =
-    lastRunAt && formatDistanceToNow(lastRunAt, { addSuffix: true });
-
-  const NextSchedule = nextRunAt && format(nextRunAt, "yyyy-MM-dd HH:mm");
-  const NextScheduleUTC =
-    nextRunAt && formatInTimeZone(nextRunAt, "UTC", "HH:mm");
+    startedAt && formatDistanceToNow(startedAt, { addSuffix: true });
+  const nextSchedule = nextAt && format(nextAt, "yyyy-MM-dd HH:mm");
+  const nextScheduleUTC = nextAt && formatInTimeZone(nextAt, "UTC", "HH:mm");
 
   if (isDraft) {
-    return;
+    return null;
   }
 
   return (
     <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">
       <div className="flex items-center text-sm gap-2">
-        {lastRunAt ? (
-          <Link
-            href={`/workflows/runs/${lastRunId}`}
-            className="flex items-center text-sm gap-2 group"
-          >
-            <span>Last run:</span>
-            <ExecutionStatusIndicator
-              status={lastRunStatus as WorkflowExecutionStatus}
-            />
-            <ExecutionStatusLabel
-              status={lastRunStatus as WorkflowExecutionStatus}
-            />{" "}
-            <span>{formattedStartedAt}</span>
-            <ChevronRightIcon
-              size={14}
-              className="-translate-x-[2px] group-hover:translate-x-0 transition"
-            />
-          </Link>
+        {startedAt ? (
+          lastRunId ? (
+            <Link
+              href={`/workflows/runs/${lastRunId}`}
+              className="flex items-center text-sm gap-2 group"
+            >
+              <span>Last run:</span>
+              {lastRunStatus && (
+                <>
+                  <ExecutionStatusIndicator
+                    status={lastRunStatus as WorkflowExecutionStatus}
+                  />
+                  <ExecutionStatusLabel
+                    status={lastRunStatus as WorkflowExecutionStatus}
+                  />
+                </>
+              )}
+              <span>{formattedStartedAt}</span>
+              <ChevronRightIcon
+                size={14}
+                className="-translate-x-[2px] group-hover:translate-x-0 transition"
+              />
+            </Link>
+          ) : (
+            <div className="flex items-center text-sm gap-2">
+              <span>Last run:</span>
+              {lastRunStatus && (
+                <>
+                  <ExecutionStatusIndicator
+                    status={lastRunStatus as WorkflowExecutionStatus}
+                  />
+                  <ExecutionStatusLabel
+                    status={lastRunStatus as WorkflowExecutionStatus}
+                  />
+                </>
+              )}
+              <span>{formattedStartedAt}</span>
+            </div>
+          )
         ) : (
           <p>No runs yet</p>
         )}
       </div>
-      {nextRunAt && (
+      {nextAt && (
         <div className="flex items-center text-sm gap-2">
           <ClockIcon size={12} />
           <span>Next run at:</span>
-          <span>{NextSchedule}</span>
-          <span className="text-xs">({NextScheduleUTC} UTC)</span>
+          <span>{nextSchedule}</span>
+          <span className="text-xs">({nextScheduleUTC} UTC)</span>
         </div>
       )}
     </div>
