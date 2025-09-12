@@ -38,6 +38,15 @@ export function ExecutionStatusIndicator({
   );
 }
 
+/**
+ * Renders a lowercased workflow execution status label styled according to the status.
+ *
+ * The component outputs the status text inside a <span> and applies a status-specific text color class
+ * from `labelColors`. If a status has no mapped class, only the `lowercase` class is applied.
+ *
+ * @param status - The workflow execution status to display; determines the text color class.
+ * @returns A JSX element containing the styled status label.
+ */
 export function ExecutionStatusLabel({
   status,
 }: {

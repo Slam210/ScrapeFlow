@@ -28,6 +28,20 @@ import {
 import { DuplicateWorkflow } from "@/actions/workflows/duplicateWorkflow";
 import { cn } from "@/lib/utils";
 
+/**
+ * Renders a dialog and trigger button to duplicate an existing workflow.
+ *
+ * The component shows a ghost icon button that opens a form dialog for entering
+ * a new workflow name (required) and description (optional). Submitting the form
+ * runs the DuplicateWorkflow mutation; while the mutation is pending the submit
+ * button is disabled and a loading indicator is shown. On success it shows a
+ * success toast, navigates to the URL returned by the mutation, and closes the
+ * dialog. On error it shows an error toast. The form is reset whenever the
+ * dialog open state changes.
+ *
+ * @param workflowId - The ID of the workflow to duplicate; included in the form defaults.
+ * @returns The DuplicateWorkflowDialog React element.
+ */
 function DuplicateWorkflowDialog({ workflowId }: { workflowId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);

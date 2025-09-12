@@ -95,11 +95,9 @@ export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
 /**
  * Mark a workflow execution as started and update the parent workflow's last-run metadata.
  *
- * Sets the execution's `startedAt` to now and `status` to `RUNNING`, and updates the
+ * Sets the execution's `startedAt` to now and `status` to `RUNNING`. Updates the parent
  * workflow's `lastRunAt`, `lastRunStatus`, and `lastRunId` to reference this execution.
- *
- * @param executionId - ID of the workflow execution to mark as started
- * @param workflowId - ID of the workflow to update with last-run information
+ * If `nextRunAt` is provided, the workflow's `nextRunAt` is also updated.
  */
 async function initializeWorkflowExecution(
   executionId: string,
