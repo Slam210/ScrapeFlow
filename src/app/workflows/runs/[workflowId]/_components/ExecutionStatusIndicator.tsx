@@ -11,6 +11,13 @@ const indicatorColors: Record<WorkflowExecutionStatus, string> = {
   COMPLETED: "bg-emerald-600",
 };
 
+const labelColors: Record<WorkflowExecutionStatus, string> = {
+  PENDING: "text-slate-400",
+  RUNNING: "text-yellow-400",
+  FAILED: "text-red-400",
+  COMPLETED: "text-emerald-600",
+};
+
 /**
  * Renders a small colored status indicator dot for a workflow execution.
  *
@@ -21,7 +28,7 @@ const indicatorColors: Record<WorkflowExecutionStatus, string> = {
  * @param status - The workflow execution status to represent.
  * @returns A JSX element: a 8×8px rounded dot whose background color reflects `status`.
  */
-export default function ExecutionStatusIndicator({
+export function ExecutionStatusIndicator({
   status,
 }: {
   status: WorkflowExecutionStatus;
@@ -29,4 +36,21 @@ export default function ExecutionStatusIndicator({
   return (
     <div className={cn("w-2 h-2 rounded-full", indicatorColors[status])} />
   );
+}
+
+/**
+ * Renders a lowercased workflow execution status label styled according to the status.
+ *
+ * The component outputs the status text inside a <span> and applies a status-specific text color class
+ * from `labelColors`. If a status has no mapped class, only the `lowercase` class is applied.
+ *
+ * @param status - The workflow execution status to display; determines the text color class.
+ * @returns A JSX element containing the styled status label.
+ */
+export function ExecutionStatusLabel({
+  status,
+}: {
+  status: WorkflowExecutionStatus;
+}) {
+  return <span className={cn("lowercase", labelColors[status])}>{status}</span>;
 }
