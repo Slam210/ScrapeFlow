@@ -15,22 +15,17 @@ interface Props {
 }
 
 /**
- * Conditionally wraps children with a tooltip that displays the given content.
+ * Wraps given children with a tooltip that displays the provided content.
  *
- * If `content` is falsy, the children are returned as-is and no tooltip UI is mounted.
- * Otherwise the children are used as the tooltip trigger and `content` is shown inside
- * the tooltip positioned according to `side`.
+ * Renders a TooltipProvider (no delay), a TooltipTrigger that uses the children as the trigger element,
+ * and TooltipContent positioned by the optional `side` prop.
  *
  * @param props.children - Element(s) that act as the tooltip trigger.
- * @param props.content - Content to display inside the tooltip; when falsy, no tooltip is rendered.
- * @param props.side - Optional position for the tooltip content: `"top" | "bottom" | "left" | "right"`.
- * @returns A JSX element that is either the original children (when `content` is falsy) or the children wrapped with tooltip UI.
+ * @param props.content - Content rendered inside the tooltip.
+ * @param props.side - Optional side (`"top" | "bottom" | "left" | "right"`) to position the tooltip content.
+ * @returns A JSX element that renders the tooltip-wrapped children.
  */
 export default function TooltipWrapper(props: Props) {
-  if (!props.content) {
-    return props.children;
-  }
-
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>

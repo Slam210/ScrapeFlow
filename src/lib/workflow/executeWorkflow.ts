@@ -31,7 +31,7 @@ import { createLogCollector } from "../log";
  * @param executionId - ID of the workflow execution to run.
  * @throws Error if the execution with the given `executionId` is not found.
  */
-export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
+export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
     where: {
       id: executionId,
@@ -52,11 +52,7 @@ export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
   const environment: Environment = { phases: {} };
 
   // Initialize workflow execution
-  await initializeWorkflowExecution(
-    executionId,
-    execution.workflowId,
-    nextRunAt
-  );
+  await initializeWorkflowExecution(executionId, execution.workflowId);
   // Initialize phases status
   await initializePhaseStatuses(execution);
 
@@ -95,14 +91,15 @@ export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
 /**
  * Mark a workflow execution as started and update the parent workflow's last-run metadata.
  *
- * Sets the execution's `startedAt` to now and `status` to `RUNNING`. Updates the parent
+ * Sets the execution's `startedAt` to now and `status` to `RUNNING`, and updates the
  * workflow's `lastRunAt`, `lastRunStatus`, and `lastRunId` to reference this execution.
- * If `nextRunAt` is provided, the workflow's `nextRunAt` is also updated.
+ *
+ * @param executionId - ID of the workflow execution to mark as started
+ * @param workflowId - ID of the workflow to update with last-run information
  */
 async function initializeWorkflowExecution(
   executionId: string,
-  workflowId: string,
-  nextRunAt?: Date
+  workflowId: string
 ) {
   await prisma.workflowExecution.update({
     where: {
@@ -122,7 +119,6 @@ async function initializeWorkflowExecution(
       lastRunAt: new Date(),
       lastRunStatus: WorkflowExecutionStatus.RUNNING,
       lastRunId: executionId,
-      ...(nextRunAt && { nextRunAt }),
     },
   });
 }
@@ -135,7 +131,6 @@ async function initializeWorkflowExecution(
  * from `execution.phases` to perform a single bulk update.
  *
  * @param execution - Execution object whose phases' statuses will be reset to PENDING. Only the phase `id` values are used.
- */
 async function initializePhaseStatuses(
   execution: {
     phases: {
