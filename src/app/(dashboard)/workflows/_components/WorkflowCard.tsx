@@ -41,12 +41,15 @@ interface WorkflowCardProps {
 }
 
 /**
- * Renders a dashboard card for a single workflow, showing its status, title, and available actions.
+ * Render a dashboard card for a single workflow showing status, title, and actions.
  *
- * Shows a colored circular status indicator (Draft vs Published), the workflow name linked to the editor, an "Edit" button, and a "More actions" menu that includes deletion.
+ * Renders a circular status indicator (Draft or Published), a link to the workflow editor, and action controls:
+ * - For drafts: shows a "Draft" badge and a Run button.
+ * - For published workflows: shows scheduling controls (via ScheduleSection) and a credit-cost badge when applicable.
+ * Also includes an Edit link and a "More actions" menu that exposes deletion.
  *
- * @param workflow - The workflow object to render (must include `id`, `name`, and `status`).
- * @returns The workflow card JSX element.
+ * @param workflow - Workflow to render; must include `id`, `name`, `status`, and may include `creditsCost` and `cron`.
+ * @returns The JSX element for the workflow card.
  */
 function WorkflowCard({ workflow }: WorkflowCardProps) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
@@ -112,12 +115,13 @@ function WorkflowCard({ workflow }: WorkflowCardProps) {
 }
 
 /**
- * Renders the actions menu for a workflow card, including the "More actions" dropdown and delete flow.
+ * Render the "More actions" dropdown for a workflow card and manage the delete confirmation flow.
  *
- * The component manages local state to show/hide the DeleteWorkflowDialog. Selecting "Delete" from the menu toggles that dialog.
+ * Displays a ghost icon button that opens a menu with an "Delete" item. Selecting "Delete" toggles
+ * a DeleteWorkflowDialog which receives the workflowName and workflowId to confirm removal.
  *
- * @param workflowName - Visible name shown in the delete confirmation dialog.
- * @param workflowId - ID passed to the delete dialog to identify which workflow to remove.
+ * @param workflowName - The visible workflow name shown in the delete confirmation dialog.
+ * @param workflowId - The workflow's identifier passed to the delete dialog.
  */
 function WorkflowActions({
   workflowName,
@@ -159,6 +163,19 @@ function WorkflowActions({
   );
 }
 
+/**
+ * Renders the schedule controls and a credit-cost badge for a non-draft workflow.
+ *
+ * Returns null for draft workflows. When rendered, the component displays
+ * schedule-related icons, a ScheduleDialog (remounted when `cron` or `workflowId` changes),
+ * and a badge showing the estimated `creditsCost` for a full run.
+ *
+ * @param isDraft - true to skip rendering (workflow is a draft)
+ * @param creditsCost - estimated credit consumption for a full workflow run
+ * @param workflowId - workflow identifier passed to the schedule dialog
+ * @param cron - cron schedule string for the workflow; may be null
+ * @returns A JSX element containing schedule controls and a credit badge, or null for drafts.
+ */
 function ScheduleSection({
   isDraft,
   creditsCost,
