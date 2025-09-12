@@ -26,6 +26,10 @@ interface Props {
  * @returns A JSX element that renders the tooltip-wrapped children.
  */
 export default function TooltipWrapper(props: Props) {
+  if (!props.content) {
+    return props.children;
+  }
+
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
