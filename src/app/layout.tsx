@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/providers/AppProvider";
 import { DesktopSidebar } from "@/components/Sidebar";
 import BreadCrumbHeader from "@/components/BreadCrumbHeader";
-import { ModeToggle } from "@/components/ThemeModeToggle";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+
+import { HeaderActions } from "@/components/HeaderActions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,12 +67,7 @@ export default function RootLayout({
                 {/* Header */}
                 <header className="flex items-center justify-between px-6 py-4 h-[50px] container">
                   <BreadCrumbHeader />
-                  <div className="gap-1 flex items-center">
-                    <ModeToggle />
-                    <SignedIn>
-                      <UserButton />
-                    </SignedIn>
-                  </div>
+                  <HeaderActions />
                 </header>
 
                 <Separator />
