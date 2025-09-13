@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/providers/AppProvider";
 import { DesktopSidebar } from "@/components/Sidebar";
 import BreadCrumbHeader from "@/components/BreadCrumbHeader";
-import { ModeToggle } from "@/components/ThemeModeToggle";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+
+import { HeaderActions } from "@/components/HeaderActions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,17 +27,16 @@ export const metadata: Metadata = {
 };
 
 /**
- * App root layout that wraps application pages with global providers, navigation, and UI shell.
+ * Root layout that wraps all pages with global providers, shell UI, and persistent navigation.
  *
- * Renders global providers (ClerkProvider and AppProviders), registers Geist fonts via CSS variables,
- * and composes the persistent sidebar, top header (breadcrumb + theme toggle + authenticated user button),
- * a scrollable content region for `children`, and a global Toaster for notifications.
+ * Provides authentication and app-level providers (ClerkProvider and AppProviders), exposes Geist fonts
+ * via CSS variables, and composes the main application chrome: a persistent desktop sidebar, a top
+ * header (breadcrumb and header actions), a separator, and a scrollable content region that renders `children`.
+ * Also mounts a global Toaster for notifications. ClerkProvider is configured to redirect to `/sign-in`
+ * after sign-out and applies a custom primary form button appearance.
  *
- * The ClerkProvider is configured to redirect to `/sign-in` after sign-out and applies a custom primary
- * form button appearance. The user button in the header is only rendered for authenticated users.
- *
- * @param children - The page content to render inside the layout's scrollable main area.
- * @returns The application layout JSX element.
+ * @param children - Page content to render inside the layout's scrollable main area.
+ * @returns The root JSX layout for the application.
  */
 export default function RootLayout({
   children,
@@ -66,12 +66,7 @@ export default function RootLayout({
                 {/* Header */}
                 <header className="flex items-center justify-between px-6 py-4 h-[50px] container">
                   <BreadCrumbHeader />
-                  <div className="gap-1 flex items-center">
-                    <ModeToggle />
-                    <SignedIn>
-                      <UserButton />
-                    </SignedIn>
-                  </div>
+                  <HeaderActions />
                 </header>
 
                 <Separator />
