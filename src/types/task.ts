@@ -6,6 +6,7 @@ export enum TaskType {
   CLICK_ELEMENT = "CLICK_ELEMENT",
   WAIT_FOR_ELEMENT = "WAIT_FOR_ELEMENT",
   DELAY = "DELAY",
+  DELIVER_VIA_WEBHOOK = "DELIVER_VIA_WEBHOOK",
 }
 
 export type OptionType = {
@@ -26,6 +27,7 @@ export interface TaskParam {
   helperText?: string;
   required?: boolean;
   hideHandle?: boolean;
+  value?: string;
   [key: string]: unknown;
   options?: OptionType[];
 }
