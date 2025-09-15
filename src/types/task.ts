@@ -5,6 +5,7 @@ export enum TaskType {
   FILL_INPUT = "FILL_INPUT",
   CLICK_ELEMENT = "CLICK_ELEMENT",
   WAIT_FOR_ELEMENT = "WAIT_FOR_ELEMENT",
+  DELAY = "DELAY",
 }
 
 export type OptionType = {
@@ -16,6 +17,7 @@ export enum TaskParamType {
   STRING = "STRING",
   BROWSER_INSTANCE = "BROWSER_INSTANCE",
   SELECT = "SELECT",
+  DELAY = "DELAY",
 }
 
 export interface TaskParam {

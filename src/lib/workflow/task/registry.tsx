@@ -6,6 +6,7 @@ import { ExtractTextFromElementTask } from "./ExtractTextFromElement";
 import { FillInputTask } from "./Fillinput";
 import { ClickElementTask } from "./ClickElement";
 import { WaitForElementTask } from "./WaitForElement";
+import { DelayTask } from "./Delay";
 
 type Registry = {
   [K in TaskType]: WorkflowTask & { type: K };
@@ -18,4 +19,5 @@ export const TaskRegistry: Registry = {
   FILL_INPUT: FillInputTask,
   CLICK_ELEMENT: ClickElementTask,
   WAIT_FOR_ELEMENT: WaitForElementTask,
+  DELAY: DelayTask,
 };

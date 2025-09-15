@@ -53,6 +53,7 @@ export default function TaskMenu() {
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.WAIT_FOR_ELEMENT} />
+            <TaskMenuButton taskType={TaskType.DELAY} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
