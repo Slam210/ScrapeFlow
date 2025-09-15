@@ -3,7 +3,6 @@
 import prisma from "@/lib/prisma";
 import { WorkflowStatus } from "@/types/workflow";
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
 
 /**
  * Updates the definition of a user's draft workflow and revalidates the workflows page.
@@ -53,5 +52,5 @@ export async function UpdateWorkflow({
     },
   });
 
-  revalidatePath("/workflows");
+  return;
 }

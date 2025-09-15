@@ -1,6 +1,5 @@
 import "server-only";
 import prisma from "../prisma";
-import { revalidatePath } from "next/cache";
 import {
   ExecutionPhaseStatus,
   WorkflowExecutionStatus,
@@ -88,8 +87,7 @@ export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
   );
   // Clean up environment
   await cleanupEnvironent(environment);
-
-  revalidatePath("/workflows/runs");
+  return;
 }
 
 /**
@@ -356,7 +354,7 @@ async function finalizePhase(
         createMany: {
           data: logCollector.getAll().map((log) => ({
             message: log.message,
-            timeStamp: log.timeStamp,
+            timestamp: log.timestamp,
             logLevel: log.level,
           })),
         },
@@ -416,7 +414,7 @@ function setupEnvironmentForPhase(
   for (const input of inputs) {
     if (input.type === TaskParamType.BROWSER_INSTANCE) continue;
     const inputValue = node.data.inputs[input.name];
-    if (Object.prototype.hasOwnProperty.call(node.data.inputs, input.name)) {
+    if (inputValue) {
       environment.phases[node.id].inputs[input.name] = inputValue;
       continue;
     }
@@ -431,22 +429,10 @@ function setupEnvironmentForPhase(
       continue;
     }
 
-    const upstream = environment.phases[connectedEdge.source];
-    if (!upstream) {
-      console.error(
-        "Upstream phase not initialized for",
-        input.name,
-        "source node id:",
-        connectedEdge.source
-      );
-      continue;
-    }
-    const handle = connectedEdge.sourceHandle;
-    if (!handle) {
-      console.error("Missing source handle for edge to input", input.name);
-      continue;
-    }
-    const outputValue = upstream.outputs[handle];
+    const outputValue =
+      environment.phases[connectedEdge.source].outputs[
+        connectedEdge.sourceHandle!
+      ];
 
     environment.phases[node.id].inputs[input.name] = outputValue;
   }

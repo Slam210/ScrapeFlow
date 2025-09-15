@@ -13,15 +13,17 @@ import ExecutionsTable from "./_components/ExecutionsTable";
  * @param params.workflowId - ID of the workflow whose executions should be displayed.
  * @returns The page React element containing the top bar and executions content.
  */
-export default function ExecutionsPage({
+export default async function ExecutionsPage({
   params,
 }: {
-  params: { workflowId: string };
+  params: Promise<{ workflowId: string }>;
 }) {
+  const { workflowId } = await params;
+
   return (
     <div className="h-full w-full overflow-auto">
       <Topbar
-        workflowId={params.workflowId}
+        workflowId={workflowId}
         hideButtons
         title="All Runs"
         subtitle="List of all your workflow runs"
@@ -33,7 +35,7 @@ export default function ExecutionsPage({
           </div>
         }
       >
-        <ExecutionsTableWrapper workflowId={params.workflowId} />
+        <ExecutionsTableWrapper workflowId={workflowId} />
       </Suspense>
     </div>
   );
@@ -51,6 +53,7 @@ export default function ExecutionsPage({
  */
 async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
   const executions = await GetWorkflowExecutions(workflowId);
+
   if (!executions) {
     return <div>No data</div>;
   }

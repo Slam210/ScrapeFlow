@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
 
 /**
  * Delete a workflow owned by the currently authenticated user and revalidate the workflows page.
@@ -28,5 +27,5 @@ export async function DeleteWorkflow(id: string) {
     throw new Error("Workflow not found or not owned by user");
   }
 
-  revalidatePath("/workflows");
+  return "/workflows";
 }

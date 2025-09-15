@@ -15,7 +15,7 @@ export const DelayTask = {
       />
     );
   },
-  isEntryPoint: true,
+  isEntryPoint: false,
   credits: 0,
   inputs: [
     {

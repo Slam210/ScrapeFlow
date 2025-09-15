@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -40,13 +41,15 @@ function DeleteWorkflowDialog({
   workflowName,
   workflowId,
 }: Props) {
+  const router = useRouter();
   const [confirmText, setConfirmText] = useState("");
   const deleteMutation = useMutation({
     mutationFn: DeleteWorkflow,
-    onSuccess: () => {
+    onSuccess: (url) => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
       setOpen(false);
+      router.push(url);
     },
     onError: () => {
       toast.error("Something went wrong", { id: workflowId });

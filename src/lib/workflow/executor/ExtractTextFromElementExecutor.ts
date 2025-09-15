@@ -23,7 +23,6 @@ import * as cheerio from "cheerio";
 export async function ExtractTextFromElementExecutor(
   environment: ExecutionEnvironment<typeof ExtractTextFromElementTask>
 ): Promise<boolean> {
-  console.log("Starting web browser");
   try {
     const selector = environment.getInput("Selector");
     if (!selector) {
