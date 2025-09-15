@@ -4,11 +4,18 @@ export enum TaskType {
   EXTRACT_TEXT_FROM_ELEMENT = "EXTRACT_TEXT_FROM_ELEMENT",
   FILL_INPUT = "FILL_INPUT",
   CLICK_ELEMENT = "CLICK_ELEMENT",
+  WAIT_FOR_ELEMENT = "WAIT_FOR_ELEMENT",
 }
+
+export type OptionType = {
+  label: string;
+  value: string;
+};
 
 export enum TaskParamType {
   STRING = "STRING",
   BROWSER_INSTANCE = "BROWSER_INSTANCE",
+  SELECT = "SELECT",
 }
 
 export interface TaskParam {
@@ -18,4 +25,5 @@ export interface TaskParam {
   required?: boolean;
   hideHandle?: boolean;
   [key: string]: unknown;
+  options?: OptionType[];
 }
