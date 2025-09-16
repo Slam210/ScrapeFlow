@@ -42,14 +42,15 @@ export default async function ExecutionsPage({
 }
 
 /**
- * Renders the executions view for a workflow by fetching its runs and showing the appropriate UI.
+ * Async component that fetches and renders the executions view for a workflow.
  *
- * This async component fetches executions for `workflowId` and returns:
- * - a simple "No data" message when the fetch result is falsy,
- * - a friendly empty-state UI when the result is an empty array,
- * - the ExecutionsTable (with `initialData`) when runs are present.
+ * Fetches executions for `workflowId` and renders one of:
+ * - a "No data" message when the fetch returns a falsy value,
+ * - an empty-state illustration and guidance when the result is an empty array,
+ * - an ExecutionsTable initialized with the fetched executions when runs are present.
  *
  * @param workflowId - ID of the workflow whose executions should be displayed
+ * @returns A JSX element representing the appropriate executions UI for the workflow
  */
 async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
   const executions = await GetWorkflowExecutions(workflowId);

@@ -14,6 +14,18 @@ import { ParamProps } from "@/types/appNode";
 import { OptionType } from "@/types/task";
 import React, { useId } from "react";
 
+/**
+ * Renders a labeled dropdown for a node parameter and reports selection changes.
+ *
+ * Renders the parameter's name (with a red asterisk if required) and a Select dropdown populated
+ * from `param.options`. When the user chooses an option, `updateNodeParamValue` is invoked with the
+ * selected option's `value`.
+ *
+ * @param param - Parameter descriptor. Expected to include `name: string`, optional `required: boolean`, and optional `options: OptionType[]` where each option has `value` and `label`.
+ * @param updateNodeParamValue - Callback invoked with the selected option value when the selection changes.
+ * @param value - Current or default selected value for the dropdown.
+ * @returns A React element containing the labeled select control.
+ */
 export default function SelectParam({
   param,
   updateNodeParamValue,

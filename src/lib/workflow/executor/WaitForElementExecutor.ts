@@ -1,6 +1,17 @@
 import { ExecutionEnvironment } from "@/types/executor";
 import { WaitForElementTask } from "../task/WaitForElement";
 
+/**
+ * Waits for an element matching the configured selector to reach the specified visibility state.
+ *
+ * Reads the inputs "Selector" and "Visibility" from the provided execution environment and calls
+ * the environment's page `waitForSelector` with options derived from `Visibility` (`"visible"` or `"hidden"`).
+ * If either input is missing the function logs an error via the environment but still attempts the wait.
+ *
+ * Preconditions: the environment must provide a Playwright/Puppeteer-like Page via `environment.getPage()`.
+ *
+ * @returns A promise that resolves to `true` when the element reaches the requested state, or `false` if an error occurs.
+ */
 export async function WaitForElementExecutor(
   environment: ExecutionEnvironment<typeof WaitForElementTask>
 ): Promise<boolean> {

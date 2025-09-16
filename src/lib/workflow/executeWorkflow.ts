@@ -19,16 +19,17 @@ import { createLogCollector } from "../log";
 /**
  * Orchestrates and runs a workflow execution identified by `executionId`.
  *
- * Loads the execution (including workflow and phases), builds an in-memory execution environment,
- * marks the execution as running and all phases as pending, then executes phases in order.
- * For each phase it wires inputs/outputs, attempts to decrement the user's credits, runs the
- * registered executor, collects logs and outputs, and stops on the first failing phase.
- * After all processing it finalizes the execution record (COMPLETED or FAILED), records total
- * credits consumed, cleans up in-memory resources (e.g., browser/page), and triggers a path
- * revalidation for "/workflows/runs".
+ * Loads the execution with its workflow and ordered phases, prepares an in-memory
+ * environment, marks the execution RUNNING and phases PENDING, then executes phases
+ * sequentially. For each phase it wires inputs/outputs, attempts to decrement the
+ * user's credits, invokes the registered executor, collects logs/outputs, and stops
+ * on the first failing phase. After processing, it finalizes the execution state
+ * (COMPLETED or FAILED), records total credits consumed, and cleans up in-memory
+ * resources (e.g., browser/page).
  *
  * @param executionId - ID of the workflow execution to run.
- * @throws Error if the execution with the given `executionId` is not found.
+ * @param nextRunAt - Optional next scheduled run time to update on the parent workflow.
+ * @throws Error if no workflow execution exists for `executionId`.
  */
 export async function ExecuteWorkflow(executionId: string, nextRunAt?: Date) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -318,17 +319,16 @@ async function executeWorkflowPhase(
 }
 
 /**
- * Persist the final state of an execution phase (status, outputs, logs, and credits).
+ * Persist the final state of an execution phase: status, completion time, outputs, logs, and consumed credits.
  *
- * Updates the phase record identified by `phaseId` with a completion status
- * (COMPLETED or FAILED), completion timestamp, serialized `outputs`, `creditsConsumed`,
- * and creates log entries from `logCollector`.
+ * Sets the phase status to COMPLETED or FAILED based on `success`, records `completedAt` as now,
+ * stores `outputs` (JSON-stringified), writes `creditsConsumed`, and creates log entries from `logCollector`.
  *
- * @param phaseId - ID of the execution phase to finalize
- * @param success - Whether the phase completed successfully
- * @param outputs - Phase outputs to persist (will be JSON-stringified)
- * @param logCollector - Collector providing log entries to store for this phase
- * @param creditsConsumed - Number of credits charged for this phase
+ * @param phaseId - Execution phase ID to update
+ * @param success - True if the phase succeeded; determines final status
+ * @param outputs - Phase outputs to persist; will be JSON-stringified
+ * @param logCollector - Supplies log entries; each entry's message, timestamp, and level are persisted
+ * @param creditsConsumed - Number of credits to record as consumed by this phase
  */
 async function finalizePhase(
   phaseId: string,
@@ -364,16 +364,17 @@ async function finalizePhase(
 }
 
 /**
- * Runs the registered executor for a workflow node and returns whether it succeeded.
+ * Execute the registered executor for a workflow node and return whether it succeeded.
  *
- * Looks up a run function by the node's task type and, if present, invokes it with a
- * runtime ExecutionEnvironment that exposes inputs, outputs, browser/page handles, and logging.
+ * Looks up the executor for `node.data.type`, constructs a scoped ExecutionEnvironment
+ * (providing inputs, outputs, browser/page access, and logging), and invokes the executor.
+ * The executor may read/write the provided environment and emit runtime logs via `logCollector`.
  *
- * @param phase - The execution phase record being executed (used for context in logs/state).
- * @param node - The workflow node to execute; its `data.type` selects the executor.
- * @param environment - The in-memory environment holding per-phase inputs/outputs and browser/page.
- * @param logCollector - Collector used by the executor to record runtime logs.
- * @returns True if an executor was found and returned a successful result; false if no executor exists or the executor returned failure.
+ * @param phase - Phase record providing execution context (used for logs/state correlation).
+ * @param node - Workflow node whose `data.type` selects the executor.
+ * @param environment - In-memory environment containing per-phase inputs/outputs and shared browser/page.
+ * @param logCollector - Collector used by the executor to record runtime logs and errors.
+ * @returns True when an executor was found and returned a successful result; false if no executor exists or the executor returned failure.
  */
 async function executePhase(
   phase: ExecutionPhase,
@@ -393,14 +394,21 @@ async function executePhase(
 }
 
 /**
- * Initialize phase inputs and outputs in the shared environment for a given node.
+ * Prepare per-phase inputs and outputs in the shared in-memory environment for a node.
  *
- * Ensures environment.phases[node.id] exists with `inputs` and `outputs` objects,
- * populates inputs from the node's configured input values or from upstream phase
- * outputs resolved via the provided edges, and skips inputs of type `BROWSER_INSTANCE`.
+ * Ensures environment.phases[node.id] exists with empty `inputs` and `outputs`.
+ * For each declared task input (except inputs of type `BROWSER_INSTANCE`) this:
+ * - Uses a value explicitly provided on `node.data.inputs` when present and truthy.
+ * - Otherwise, resolves the value from an upstream phase output by finding an edge
+ *   where edge.target === node.id and edge.targetHandle === input.name and
+ *   reading environment.phases[edge.source].outputs[edge.sourceHandle].
+ *
+ * If no connecting edge is found for an input, the input is left unset.
+ * Note: this function mutates `environment.phases[node.id]` and may throw a runtime
+ * error if an expected upstream phase or output handle is missing when resolving from edges.
  *
  * @param node - The workflow node whose phase environment should be prepared.
- * @param environment - The mutable in-memory environment that holds per-phase state; this function mutates `environment.phases[node.id]`.
+ * @param environment - The mutable in-memory environment; this function sets and mutates environment.phases[node.id].
  * @param edges - Workflow graph edges used to resolve inputs from upstream phase outputs.
  */
 function setupEnvironmentForPhase(
