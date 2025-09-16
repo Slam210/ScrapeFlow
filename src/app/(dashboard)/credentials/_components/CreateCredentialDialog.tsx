@@ -51,7 +51,9 @@ function CreateCredentialDialog({ triggerText }: { triggerText?: string }) {
     mutationFn: createCredential,
     onSuccess: (url) => {
       toast.success("Credential created", { id: "create-credential" });
-      router.push(`/credential/editor/${url}`);
+      setOpen(false);
+      form.reset();
+      router.push(url);
     },
     onError: () => {
       toast.error("Failed to create credential", { id: "create-credential" });

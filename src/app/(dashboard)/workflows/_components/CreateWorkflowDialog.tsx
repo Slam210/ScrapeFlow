@@ -55,6 +55,8 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
     mutationFn: CreateWorkflow,
     onSuccess: (data) => {
       toast.success("Workflow created", { id: "create-workflow" });
+      setOpen(false);
+      form.reset();
       router.push(`/workflows/editor/${data.id}`);
     },
     onError: () => {
