@@ -4,13 +4,6 @@ import prisma from "@/lib/prisma";
 import { symmetricDecrypt } from "@/lib/encryption";
 import OpenAI from "openai";
 
-/**
- * Executes a click on a page element defined by the task's "Selector" input.
- *
- * Retrieves the "Selector" input from the provided execution environment, uses the environment's page to perform a click on that selector, and returns true on success. On failure the function logs the error and returns false.
- *
- * @returns True if the click succeeded; false if an error occurred.
- */
 export async function ExtractDataWithAIExecutor(
   environment: ExecutionEnvironment<typeof ExtractDataWithAITask>
 ): Promise<boolean> {
