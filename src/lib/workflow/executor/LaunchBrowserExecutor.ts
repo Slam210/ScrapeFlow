@@ -1,63 +1,52 @@
 import { ExecutionEnvironment } from "@/types/executor";
-import puppeteer, { Browser } from "puppeteer";
+import puppeteer from "puppeteer";
 import { LaunchBrowserTask } from "../task/LaunchBrowser";
 
 /**
- * Launches a headless Puppeteer browser, opens a page at the configured "Website URL", and stores the browser and page in the execution environment.
+ * Launches a headless Puppeteer browser, opens a new page, and navigates to the environment's "Website URL" input.
  *
- * On success, the created browser and page are saved into the provided execution environment and progress is logged there.
- * On failure, the error is logged to both console and the environment log.
+ * On success, stores the created browser and page on the provided environment and returns `true`. On failure, logs the error and returns `false`.
  *
- * @returns `true` if the browser was launched and the page opened successfully; `false` if an error occurred.
+ * @returns `true` if the browser was launched and the page navigated successfully; `false` if an error occurred.
  */
 export async function LaunchBrowserExecutor(
   environment: ExecutionEnvironment<typeof LaunchBrowserTask>
 ): Promise<boolean> {
   console.log("Starting web browser");
-  let browser: Browser | null = null;
-  try {
-    // console.log("@@ENV", JSON.stringify(environment, null, 4));
-    const websiteUrl = environment.getInput("Website URL");
-    if (!websiteUrl) {
-      throw new Error("Website URL is required");
-    }
-    let parsed: URL;
+
+  const websiteUrl = environment.getInput("Website URL");
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      parsed = new URL(websiteUrl);
-    } catch {
-      throw new Error("Invalid URL");
-    }
-    if (!["http:", "https:"].includes(parsed.protocol)) {
-      throw new Error("Only http(s) URLs are allowed");
-    }
-    // console.log("@@WEBSITE URL", websiteUrl);
-    browser = await puppeteer.launch({
-      headless: true, // false for testing, true for production
-    });
+      environment.log.info(`Attempt ${attempt}: launching browser...`);
 
-    environment.setBrowser(browser);
-    environment.log.info("Browser started successfully");
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(30_000);
-    await page.goto(parsed.toString(), {
-      waitUntil: "domcontentloaded",
-      timeout: 30_000,
-    });
-    environment.setPage(page);
-    environment.log.info(`Opened page at ${websiteUrl}`);
+      const browser = await puppeteer.launch({
+        headless: true, // false for testing, true for production
+      });
 
-    return true;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(error);
-    environment.log.error(message);
-    return false;
-  } finally {
-    // If execution failed before handing off, clean up
-    if (browser) {
-      try {
-        await browser.close();
-      } catch {}
+      environment.setBrowser(browser);
+      environment.log.info("Browser started successfully");
+
+      const page = await browser.newPage();
+      await page.goto(websiteUrl);
+      environment.setPage(page);
+      environment.log.info(`Opened page at ${websiteUrl}`);
+
+      return true; // Success, exit early
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(error);
+      environment.log.error(`Attempt ${attempt} failed: ${message}`);
+
+      if (attempt === 3) {
+        environment.log.error("All 3 attempts failed. Giving up.");
+        return false;
+      }
+
+      // Optional: small delay before retry
+      await new Promise((res) => setTimeout(res, 1000));
     }
   }
+
+  return false; // Should never reach here
 }

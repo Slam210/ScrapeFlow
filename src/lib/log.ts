@@ -7,11 +7,11 @@ import {
 } from "@/types/log";
 
 /**
- * Creates an in-memory log collector with per-level logging functions.
+ * Creates an in-memory log collector that records timestamped entries per log level.
  *
- * The returned object exposes a `getAll` function and one log function for each level in `LogLevels`.
- * Calling a level function (e.g., `info('msg')`) synchronously appends a `Log` entry `{ message, level, timeStamp }`
- * to an internal array. `getAll()` returns the internal logs array (live reference) so callers can read the accumulated entries.
+ * The returned object exposes a `getAll` function and one function for each level in `LogLevels`.
+ * Calling a level function (e.g., `info('msg')`) synchronously appends a `Log` entry `{ message, level, timestamp }`
+ * (where `timestamp` is a `Date`) to an internal array. `getAll()` returns a shallow copy of the accumulated logs.
  *
  * @returns A `LogCollector` containing `getAll` and per-level log functions that record timestamped log entries.
  */
@@ -23,7 +23,7 @@ export function createLogCollector(): LogCollector {
   LogLevels.forEach(
     (level) =>
       (logFunctions[level] = (message: string) => {
-        logs.push({ message, level, timeStamp: new Date() });
+        logs.push({ message, level, timestamp: new Date() });
       })
   );
   return {

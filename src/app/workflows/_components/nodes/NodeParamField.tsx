@@ -6,6 +6,8 @@ import StringParam from "./params/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
 import BrowserInstanceParam from "./params/BrowserInstanceParam";
+import SelectParam from "./params/SelectParam";
+import DelayParam from "./params/DelayParam";
 
 /**
  * Render an editor control for a single node parameter and propagate edits into React Flow.
@@ -65,6 +67,24 @@ function NodeParamField({
           param={param}
           value={""}
           updateNodeParamValue={updateNodeParamValue}
+        />
+      );
+    case TaskParamType.SELECT:
+      return (
+        <SelectParam
+          param={param}
+          value={value ?? ""}
+          updateNodeParamValue={updateNodeParamValue}
+          disabled={disabled}
+        />
+      );
+    case TaskParamType.DELAY:
+      return (
+        <DelayParam
+          param={param}
+          value={value ?? ""}
+          updateNodeParamValue={updateNodeParamValue}
+          disabled={disabled}
         />
       );
     default:

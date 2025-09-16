@@ -12,14 +12,20 @@ import { TaskType } from "@/types/task";
 import React from "react";
 
 /**
- * Sidebar menu that exposes data-extraction task buttons as draggable items.
+ * Sidebar containing draggable task buttons organized into accordion sections.
  *
- * Renders a fixed-width aside containing an accordion with a single "Data extraction"
- * section. The section contains TaskMenuButton entries for available extraction tasks
- * (Page to HTML and Extract text from element) which are intended to be dragged into
- * a workflow/canvas.
+ * Renders a fixed-width aside with an Accordion that is open by default for the
+ * "interactions", "extraction", "timing", and "results" sections. Each section
+ * lists draggable TaskMenuButton entries that represent workflow tasks:
+ * - User Interactions: FILL_INPUT, CLICK_ELEMENT
+ * - Data extraction: PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT
+ * - Timing controls: WAIT_FOR_ELEMENT, DELAY
+ * - Result Delivery: DELIVER_VIA_WEBHOOK
  *
- * @returns A JSX element representing the task menu sidebar.
+ * Dragging a button sets a React Flow payload for the corresponding TaskType so
+ * the task can be dropped into a workflow/canvas.
+ *
+ * @returns A JSX element for the task menu sidebar.
  */
 export default function TaskMenu() {
   return (
@@ -27,8 +33,17 @@ export default function TaskMenu() {
       <Accordion
         type="multiple"
         className="w-full"
-        defaultValue={["extraction"]}
+        defaultValue={["interactions", "extraction", "timing", "results"]}
       >
+        <AccordionItem value="interactions">
+          <AccordionTrigger className="font-bold">
+            User Interactions
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.FILL_INPUT} />
+            <TaskMenuButton taskType={TaskType.CLICK_ELEMENT} />
+          </AccordionContent>
+        </AccordionItem>
         <AccordionItem value="extraction">
           <AccordionTrigger className="font-bold">
             Data extraction
@@ -36,6 +51,23 @@ export default function TaskMenu() {
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.PAGE_TO_HTML} />
             <TaskMenuButton taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="timing">
+          <AccordionTrigger className="font-bold">
+            Timing controls
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.WAIT_FOR_ELEMENT} />
+            <TaskMenuButton taskType={TaskType.DELAY} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="results">
+          <AccordionTrigger className="font-bold">
+            Result Delivery
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.DELIVER_VIA_WEBHOOK} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

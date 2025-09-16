@@ -13,15 +13,17 @@ import ExecutionsTable from "./_components/ExecutionsTable";
  * @param params.workflowId - ID of the workflow whose executions should be displayed.
  * @returns The page React element containing the top bar and executions content.
  */
-export default function ExecutionsPage({
+export default async function ExecutionsPage({
   params,
 }: {
-  params: { workflowId: string };
+  params: Promise<{ workflowId: string }>;
 }) {
+  const { workflowId } = await params;
+
   return (
     <div className="h-full w-full overflow-auto">
       <Topbar
-        workflowId={params.workflowId}
+        workflowId={workflowId}
         hideButtons
         title="All Runs"
         subtitle="List of all your workflow runs"
@@ -33,24 +35,26 @@ export default function ExecutionsPage({
           </div>
         }
       >
-        <ExecutionsTableWrapper workflowId={params.workflowId} />
+        <ExecutionsTableWrapper workflowId={workflowId} />
       </Suspense>
     </div>
   );
 }
 
 /**
- * Renders the executions view for a workflow by fetching its runs and showing the appropriate UI.
+ * Async component that fetches and renders the executions view for a workflow.
  *
- * This async component fetches executions for `workflowId` and returns:
- * - a simple "No data" message when the fetch result is falsy,
- * - a friendly empty-state UI when the result is an empty array,
- * - the ExecutionsTable (with `initialData`) when runs are present.
+ * Fetches executions for `workflowId` and renders one of:
+ * - a "No data" message when the fetch returns a falsy value,
+ * - an empty-state illustration and guidance when the result is an empty array,
+ * - an ExecutionsTable initialized with the fetched executions when runs are present.
  *
  * @param workflowId - ID of the workflow whose executions should be displayed
+ * @returns A JSX element representing the appropriate executions UI for the workflow
  */
 async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
   const executions = await GetWorkflowExecutions(workflowId);
+
   if (!executions) {
     return <div>No data</div>;
   }

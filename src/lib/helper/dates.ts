@@ -1,32 +1,47 @@
 import { intervalToDuration } from "date-fns";
 
 /**
- * Produce a short, human-readable duration string for the interval between two dates.
+ * Produce a short, human-readable duration string for the interval between two times.
  *
- * If either `start` or `end` is null/undefined the function returns `null`.
- * If the elapsed time (end - start) is less than 1000ms the function returns a millisecond string like `"123ms"`.
- * Otherwise it returns a minutes-and-seconds string in the form `"<minutes>m <seconds>s"`. Minutes and seconds default to `0` when absent.
+ * Accepts Date, ISO date string, timestamp (number), or null/undefined for each argument.
+ * Returns null when either argument is missing or cannot be parsed as a valid Date.
  *
- * Note: the function computes `end.getTime() - start.getTime()` so a negative elapsed time (when `end` is before `start`) will produce a negative millisecond string when its absolute value is < 1000.
+ * Behavior:
+ * - If the elapsed time (end - start) has absolute value < 1000 ms, returns a millisecond string preserving sign, e.g. `"123ms"` or `"-123ms"`.
+ * - If the absolute elapsed time is >= 1000 ms, returns a minutes-and-seconds string in the form `"<minutes>m <seconds>s"`. Minutes and seconds are computed from the absolute duration and default to `0` when absent (sign is not preserved in this case).
  *
  * @param end - The end time (may be before `start`).
  * @param start - The start time.
- * @returns A duration string (`"<n>ms"` or `"<m>m <s>s"`) or `null` if either argument is missing.
+ * @returns A duration string (`"<n>ms"` or `"<m>m <s>s"`) or `null` if inputs are missing or invalid.
  */
-export function DatesToDurationString(
-  end: Date | null | undefined,
-  start: Date | null | undefined
-) {
-  if (!start || !end) return null;
 
-  const timeElapsed = end.getTime() - start.getTime();
-  if (timeElapsed < 1000) {
+export function DatesToDurationString(
+  end: Date | string | number | null | undefined,
+  start: Date | string | number | null | undefined
+) {
+  if (
+    start === null ||
+    start === undefined ||
+    end === null ||
+    end === undefined
+  )
+    return null;
+
+  const endDate = new Date(end);
+  const startDate = new Date(start);
+
+  if (isNaN(endDate.getTime()) || isNaN(startDate.getTime())) {
+    return null; // invalid date inputs
+  }
+
+  const timeElapsed = endDate.getTime() - startDate.getTime();
+  if (Math.abs(timeElapsed) < 1000) {
     return `${timeElapsed}ms`;
   }
 
   const duration = intervalToDuration({
     start: 0,
-    end: timeElapsed,
+    end: Math.abs(timeElapsed),
   });
 
   return `${duration.minutes || 0}m ${duration.seconds || 0}s`;

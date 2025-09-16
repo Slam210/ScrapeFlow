@@ -23,7 +23,7 @@ async function ExecutionViewerPage({
     workflowId: string;
   };
 }) {
-  const { executionId, workflowId } = params;
+  const { executionId, workflowId } = await params;
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden">

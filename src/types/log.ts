@@ -6,7 +6,7 @@ export type LogFunction = (message: string) => void;
 export type Log = {
   message: string;
   level: LogLevel;
-  timeStamp: Date;
+  timestamp: Date;
 };
 
 export type LogCollector = {

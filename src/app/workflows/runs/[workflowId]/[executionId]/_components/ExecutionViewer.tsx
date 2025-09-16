@@ -88,23 +88,23 @@ function normalizePhaseDetails(
 }
 
 /**
- * Viewer component that displays a workflow execution with its phases and per-phase details.
+ * Displays a workflow execution and its phases in a two-column UI, with per-phase details.
  *
- * Renders a two-column layout: a left sidebar with execution summary and a clickable phase list,
- * and a right pane that shows either an in-progress message, a prompt to select a phase, or
- * detailed information for the currently selected phase (credits, duration, inputs, outputs, logs).
+ * Left column shows execution metadata (status, start time, duration, credits) and a list of phases;
+ * right column shows either an in-progress notice, a prompt to select a phase, or detailed data for
+ * the selected phase (phase credits, duration, inputs, outputs, logs).
  *
- * Behavior notes:
- * - Accepts `initialData` and uses React Query to fetch the full execution (keyed by ["execution", id]),
- *   automatically polling every 1s while the execution status is RUNNING.
- * - Maintains local selection state for the active phase; when a phase is selected its details are
- *   fetched via a secondary React Query (keyed by ["phaseDetails", selectedPhase]) which is enabled
- *   only when a phase id is present.
- * - While the execution is RUNNING the component auto-selects the currently active phase (most recent
- *   by startedAt) and prevents manual phase changes.
- * - Computes and displays overall duration and total credits consumed from the execution data.
+ * Data fetching:
+ * - Seeds and drives the primary query for the execution (keyed by `["execution", id]`) using
+ *   `initialData`, and auto-refetches every second while the execution status is RUNNING.
+ * - Maintains local `selectedPhase`; when set, a secondary query fetches phase details (keyed by
+ *   `["phaseDetails", selectedPhase, executionStatus]`) and is enabled only when a phase id is present.
  *
- * @param initialData - Prefetched execution data used to seed the primary query (GetWorkflowExecutionWithPhases).
+ * Selection behavior:
+ * - When phases are present the component auto-selects the most-recent phase (by `startedAt` when
+ *   running, otherwise by `completedAt`). Manual phase selection is disabled while the execution is RUNNING.
+ *
+ * @param initialData - Prefetched execution (GetWorkflowExecutionWithPhases) used to seed the primary query.
  * @returns JSX element rendering the execution viewer UI.
  */
 export default function ExecutionViewer({
@@ -125,7 +125,7 @@ export default function ExecutionViewer({
   });
 
   const phaseDetails = useQuery({
-    queryKey: ["phaseDetails", selectedPhase],
+    queryKey: ["phaseDetails", selectedPhase, query.data?.status],
     enabled: selectedPhase !== null,
     queryFn: () => GetWorkflowPhaseDetails(selectedPhase ? selectedPhase : ""),
     select: normalizePhaseDetails,

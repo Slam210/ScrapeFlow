@@ -15,7 +15,6 @@ import { PageToHtmlTask } from "../task/PageToHtml";
 export async function PageToHtmlExecutor(
   environment: ExecutionEnvironment<typeof PageToHtmlTask>
 ): Promise<boolean> {
-  console.log("Starting web browser");
   try {
     const page = environment.getPage();
     if (!page) {

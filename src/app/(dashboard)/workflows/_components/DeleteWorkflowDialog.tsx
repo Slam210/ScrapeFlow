@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -24,12 +25,13 @@ interface Props {
 }
 
 /**
- * Confirmation dialog that prompts the user to type the workflow name before deleting it.
+ * Confirmation dialog that requires the user to type the exact workflow name to enable deletion.
  *
- * Renders an AlertDialog that requires the exact `workflowName` to be entered to enable the Delete action.
- * When Delete is clicked it shows a loading toast, invokes the `DeleteWorkflow` mutation with `workflowId`,
- * and displays a success or error toast depending on the mutation result. The typed confirmation text is
- * cleared on cancel and after a successful deletion.
+ * Shows a modal prompt and an input where the user must enter `workflowName`. The Delete action is
+ * enabled only when the entered text exactly matches `workflowName`. Clicking Delete shows a
+ * per-id loading toast, invokes the `DeleteWorkflow` mutation with `workflowId`, and on success
+ * shows a success toast (using `workflowId` as the toast id), clears the input, closes the dialog,
+ * and navigates to the URL returned by the mutation. On error, an error toast is shown.
  *
  * @param workflowName - The exact workflow name the user must type to confirm deletion.
  * @param workflowId - Identifier passed to the delete mutation and used as the toast ID.
@@ -40,13 +42,15 @@ function DeleteWorkflowDialog({
   workflowName,
   workflowId,
 }: Props) {
+  const router = useRouter();
   const [confirmText, setConfirmText] = useState("");
   const deleteMutation = useMutation({
     mutationFn: DeleteWorkflow,
-    onSuccess: () => {
+    onSuccess: (url) => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
       setOpen(false);
+      router.push(url);
     },
     onError: () => {
       toast.error("Something went wrong", { id: workflowId });
