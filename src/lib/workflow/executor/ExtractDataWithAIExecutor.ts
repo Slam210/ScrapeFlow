@@ -101,14 +101,13 @@ export async function ExtractDataWithAIExecutor(
       `Completion tokens: ${response.usage?.completion_tokens}`
     );
 
-    const result = response.choices[0].message?.content;
-
+    const result = response.choices?.[0]?.message?.content;
     if (!result) {
       environment.log.error("Empty response with AI");
       return false;
     }
 
-    environment.setOutput("Extracted data", JSON.stringify(response));
+    environment.setOutput("Extracted data", JSON.stringify(result));
 
     return true;
   } catch (error) {

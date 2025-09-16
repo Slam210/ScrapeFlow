@@ -1,6 +1,5 @@
 "use client";
 
-import { GetCredentialsForUser } from "@/actions/credentials/getCredentialsForUser";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -35,8 +34,13 @@ export default function CredentialParam({
   const id = useId();
   const query = useQuery({
     queryKey: ["credentials-for-user"],
-    queryFn: () => GetCredentialsForUser(),
+    queryFn: async () => {
+      const res = await fetch("/api/credentials", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to load credentials");
+      return (await res.json()) as { id: string; name: string }[];
+    },
     refetchInterval: 10 * 1000,
+    staleTime: 10 * 1000,
   });
 
   return (
@@ -48,8 +52,9 @@ export default function CredentialParam({
       <Select
         onValueChange={(value) => updateNodeParamValue(value)}
         defaultValue={value}
+        disabled={query.isLoading}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

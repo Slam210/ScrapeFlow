@@ -10,7 +10,7 @@ import { DelayTask } from "./Delay";
 import { DeliverViaWebhookTask } from "./DeliverViaWebhook";
 import { ExtractDataWithAITask } from "./ExtractDataWithAI";
 import { ReadPropertyFromJsonTask } from "./ReadPropertyFromJson";
-import { AddPropertyToJsonTask } from "./AddPropoertyToJson";
+import { AddPropertyToJsonTask } from "./AddPropertyToJson";
 import { NavigateUrlTask } from "./NavigateUrl";
 import { ScrollToElementTask } from "./ScrollElement";
 

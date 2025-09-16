@@ -1,5 +1,5 @@
 import { ExecutionEnvironment } from "@/types/executor";
-import { AddPropertyToJsonTask } from "../task/AddPropoertyToJson";
+import { AddPropertyToJsonTask } from "../task/AddPropertyToJson";
 
 /**
  * Adds or updates a property on a JSON object provided as a string input.
