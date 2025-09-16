@@ -499,6 +499,7 @@ function createExecutionEnvironment(
  */
 async function cleanupEnvironent(environment: Environment) {
   if (environment.browser) {
+    // Comment if using bright data
     await environment.browser
       .close()
       .catch((error) => console.error("Cannot close browser, reason: ", error));

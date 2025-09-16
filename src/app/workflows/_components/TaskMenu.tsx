@@ -6,26 +6,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TaskRegistry } from "@/lib/workflow/task/registry";
 import { TaskType } from "@/types/task";
+import { CoinsIcon } from "lucide-react";
 import React from "react";
 
 /**
- * Sidebar containing draggable task buttons organized into accordion sections.
+ * Sidebar component that renders a fixed-width, scrollable catalog of draggable task buttons.
  *
- * Renders a fixed-width aside with an Accordion that is open by default for the
- * "interactions", "extraction", "timing", and "results" sections. Each section
- * lists draggable TaskMenuButton entries that represent workflow tasks:
- * - User Interactions: FILL_INPUT, CLICK_ELEMENT
- * - Data extraction: PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT
- * - Timing controls: WAIT_FOR_ELEMENT, DELAY
- * - Result Delivery: DELIVER_VIA_WEBHOOK
+ * Organized as an Accordion (multiple open) with sections for:
+ * - User Interactions (e.g., NAVIGATE_URL, FILL_INPUT, CLICK_ELEMENT, SCROLL_TO_ELEMENT)
+ * - Data extraction (e.g., PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT, EXTRACT_DATA_WITH_AI)
+ * - Data storage (e.g., READ_PROPERTY_FROM_JSON, ADD_PROPERTY_TO_JSON)
+ * - Timing controls (e.g., WAIT_FOR_ELEMENT, DELAY)
+ * - Result Delivery (e.g., DELIVER_VIA_WEBHOOK)
  *
- * Dragging a button sets a React Flow payload for the corresponding TaskType so
- * the task can be dropped into a workflow/canvas.
+ * Each TaskMenuButton is draggable and sets an "application/reactflow" dataTransfer payload containing the TaskType,
+ * allowing tasks to be dropped into a React Flow canvas.
  *
- * @returns A JSX element for the task menu sidebar.
+ * @returns A JSX element representing the task menu sidebar.
  */
 export default function TaskMenu() {
   return (
@@ -33,15 +34,23 @@ export default function TaskMenu() {
       <Accordion
         type="multiple"
         className="w-full"
-        defaultValue={["interactions", "extraction", "timing", "results"]}
+        defaultValue={[
+          "interactions",
+          "extraction",
+          "storage",
+          "timing",
+          "results",
+        ]}
       >
         <AccordionItem value="interactions">
           <AccordionTrigger className="font-bold">
             User Interactions
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.NAVIGATE_URL} />
             <TaskMenuButton taskType={TaskType.FILL_INPUT} />
             <TaskMenuButton taskType={TaskType.CLICK_ELEMENT} />
+            <TaskMenuButton taskType={TaskType.SCROLL_TO_ELEMENT} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="extraction">
@@ -51,6 +60,16 @@ export default function TaskMenu() {
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.PAGE_TO_HTML} />
             <TaskMenuButton taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
+            <TaskMenuButton taskType={TaskType.EXTRACT_DATA_WITH_AI} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="storage">
+          <AccordionTrigger className="font-bold">
+            Data storage
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.READ_PROPERTY_FROM_JSON} />
+            <TaskMenuButton taskType={TaskType.ADD_PROPERTY_TO_JSON} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="timing">
@@ -103,6 +122,10 @@ function TaskMenuButton({ taskType }: { taskType: TaskType }) {
         <task.icon size={20} />
         {task.label}
       </div>
+      <Badge className="gap-2 flex items-center" variant={"outline"}>
+        <CoinsIcon size={16} />
+        {task.credits}
+      </Badge>
     </Button>
   );
 }

@@ -5,4 +5,5 @@ export const ColorForHandle: Record<TaskParamType, string> = {
   STRING: "!bg-amber-400",
   SELECT: "!bg-rose-400",
   DELAY: "!bg-gray-400",
+  CREDENTIAL: "!bg-teal-400",
 };
