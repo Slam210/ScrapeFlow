@@ -7,6 +7,7 @@ export enum TaskType {
   WAIT_FOR_ELEMENT = "WAIT_FOR_ELEMENT",
   DELAY = "DELAY",
   DELIVER_VIA_WEBHOOK = "DELIVER_VIA_WEBHOOK",
+  EXTRACT_DATA_WITH_AI = "EXTRACT_DATA_WITH_AI",
 }
 
 export type OptionType = {
@@ -19,6 +20,7 @@ export enum TaskParamType {
   BROWSER_INSTANCE = "BROWSER_INSTANCE",
   SELECT = "SELECT",
   DELAY = "DELAY",
+  CREDENTIAL = "CREDENTIAL",
 }
 
 export interface TaskParam {
