@@ -8,6 +8,16 @@ import CreateCredentialDialog from "./_components/CreateCredentialDialog";
 import { formatDistanceToNow } from "date-fns";
 import DeleteCredentialDialog from "./_components/DeleteCredentialDialog";
 
+/**
+ * Credentials management page for the dashboard.
+ *
+ * Renders the page layout for managing user credentials: a header with title and
+ * a CreateCredentialDialog trigger, an encryption alert, and a Suspense
+ * boundary that loads the authenticated user's credentials (UserCredentials)
+ * with a Skeleton fallback.
+ *
+ * @returns The credentials page JSX.
+ */
 export default function CredentialsPage() {
   return (
     <div className="flex flex-1 flex-col h-full">
@@ -35,6 +45,16 @@ export default function CredentialsPage() {
   );
 }
 
+/**
+ * Renders the authenticated user's credential list or appropriate empty/error states.
+ *
+ * Fetches credentials for the current user and returns JSX for one of three states:
+ * - Falsy fetch result: a simple error message.
+ * - Empty array: an empty-state Card with an illustration and a CreateCredentialDialog.
+ * - Non-empty array: a responsive list of Cards, each showing the credential name, relative creation time, and a DeleteCredentialDialog.
+ *
+ * @returns A promise resolving to the JSX element for the credentials UI.
+ */
 async function UserCredentials() {
   const credentials = await GetCredentialsForUser();
 

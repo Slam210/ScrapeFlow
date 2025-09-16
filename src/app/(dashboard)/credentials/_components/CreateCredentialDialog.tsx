@@ -28,16 +28,16 @@ import {
 import { createCredential } from "@/actions/credentials/createCredential";
 
 /**
- * Render a button-triggered modal containing a validated form to create a new workflow.
+ * Renders a button-triggered modal with a validated form to create a credential.
  *
- * The form validates input with `createWorkflowSchema` (name required, description optional).
- * On submit a "Creating workflow..." toast is shown, the `CreateWorkflow` mutation is invoked,
- * and the component displays either a success toast and navigates to `/workflows/editor/{id}`
- * using the newly created workflow's `id`, or an error toast if the mutation fails.
- * The form is reset whenever the dialog is opened or closed. While the mutation is pending the
- * submit button is disabled and shows a spinner.
+ * The form is validated with `createCredentialSchema` (required `name` and `value`). Submitting shows
+ * a loading toast ("Creating credential...") and invokes the `createCredential` mutation. On success
+ * a success toast is shown ("Credential created") and the router navigates to `/credential/editor/{url}`
+ * using the returned `url`; on error an error toast ("Failed to create credential") is shown.
+ * The form is reset whenever the dialog is opened or closed. While the mutation is pending the submit
+ * button is disabled and displays a spinner.
  *
- * @param triggerText - Optional text for the dialog trigger button; defaults to `"Create workflow"`.
+ * @param triggerText - Optional label for the trigger button; defaults to `"Create"`.
  * @returns A JSX element that renders the dialog and its contained form.
  */
 function CreateCredentialDialog({ triggerText }: { triggerText?: string }) {

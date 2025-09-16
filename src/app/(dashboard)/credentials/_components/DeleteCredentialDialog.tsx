@@ -25,16 +25,15 @@ interface Props {
 }
 
 /**
- * Confirmation dialog that requires the user to type the exact workflow name to enable deletion.
+ * Renders a confirmation dialog that requires typing the exact credential name to enable deletion.
  *
- * Shows a modal prompt and an input where the user must enter `workflowName`. The Delete action is
- * enabled only when the entered text exactly matches `workflowName`. Clicking Delete shows a
- * per-id loading toast, invokes the `DeleteWorkflow` mutation with `workflowId`, and on success
- * shows a success toast (using `workflowId` as the toast id), clears the input, closes the dialog,
- * and navigates to the URL returned by the mutation. On error, an error toast is shown.
+ * The dialog disables the Delete action until the user types `name` exactly. When Delete is
+ * confirmed it shows a per-id loading toast (id = `name`), invokes the `deleteCredential` mutation
+ * with `name`, and on success shows a success toast (id = `name`), clears the input, closes the
+ * dialog, and navigates to the URL returned by the mutation. On error, an error toast (id = `name`)
+ * is shown.
  *
- * @param workflowName - The exact workflow name the user must type to confirm deletion.
- * @param workflowId - Identifier passed to the delete mutation and used as the toast ID.
+ * @param name - The exact credential name the user must type to confirm deletion; also used as the toast id and passed to the delete mutation.
  */
 function DeleteCredentialDialog({ name }: Props) {
   const router = useRouter();
