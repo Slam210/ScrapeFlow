@@ -429,11 +429,25 @@ function setupEnvironmentForPhase(
       continue;
     }
 
-    const outputValue =
-      environment.phases[connectedEdge.source].outputs[
-        connectedEdge.sourceHandle!
-      ];
-
+    const sourceHandle = connectedEdge.sourceHandle;
+    if (!sourceHandle) {
+      console.error(
+        "Missing sourceHandle for input",
+        input.name,
+        "node id:",
+        node.id
+      );
+      continue;
+    }
+    const upstream = environment.phases[connectedEdge.source];
+    if (!upstream) {
+      console.error(
+        "Upstream phase not initialized for source:",
+        connectedEdge.source
+      );
+      continue;
+    }
+    const outputValue = upstream.outputs[sourceHandle];
     environment.phases[node.id].inputs[input.name] = outputValue;
   }
 }

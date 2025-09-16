@@ -18,7 +18,13 @@ export function DatesToDurationString(
   end: Date | string | number | null | undefined,
   start: Date | string | number | null | undefined
 ) {
-  if (!start || !end) return null;
+  if (
+    start === null ||
+    start === undefined ||
+    end === null ||
+    end === undefined
+  )
+    return null;
 
   const endDate = new Date(end);
   const startDate = new Date(start);

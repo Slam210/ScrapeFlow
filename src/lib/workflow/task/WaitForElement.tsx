@@ -4,7 +4,7 @@ import { EyeIcon } from "lucide-react";
 
 export const WaitForElementTask = {
   type: TaskType.WAIT_FOR_ELEMENT,
-  label: "Click Element",
+  label: "Wait for Element",
   icon: (props) => {
     return (
       <EyeIcon

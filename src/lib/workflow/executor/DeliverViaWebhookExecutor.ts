@@ -24,14 +24,27 @@ export async function DeliverViaWebhookExecutor(
     });
 
     const statusCode = response.status;
-
-    if (statusCode !== 200) {
-      environment.log.error(`Status code: ${statusCode}`);
+    if (!response.ok) {
+      environment.log.error(`Request failed. Status code: ${statusCode}`);
       return false;
     }
+    const contentType = response.headers.get("content-type") || "";
+    if (statusCode !== 204 && contentType.includes("application/json")) {
+      const json = await response.json();
+      environment.log.info(
+        `Webhook OK (${statusCode}). JSON length=${JSON.stringify(json).length}`
+      );
+    } else if (statusCode !== 204) {
+      const text = await response.text();
+      environment.log.info(
+        `Webhook OK (${statusCode}). Body length=${text.length}`
+      );
+    } else {
+      environment.log.info(`Webhook OK (${statusCode}). No content`);
+    }
 
-    const responseBody = await response.json();
-    environment.log.info(JSON.stringify(responseBody, null, 4));
+    // const responseBody = await response.json();
+    // environment.log.info(JSON.stringify(responseBody, null, 4));
 
     return true;
   } catch (error) {

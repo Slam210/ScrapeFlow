@@ -6,11 +6,16 @@ export async function ClickElementExecutor(
 ): Promise<boolean> {
   try {
     const selector = environment.getInput("Selector");
-    if (!selector) {
+    if (!selector?.trim()) {
       environment.log.error("input -> selector not defined");
+      return false;
     }
-
-    await environment.getPage()!.click(selector);
+    const page = environment.getPage();
+    if (!page) {
+      environment.log.error("runtime -> page not available");
+      return false;
+    }
+    await page.click(selector);
 
     return true;
   } catch (error) {
