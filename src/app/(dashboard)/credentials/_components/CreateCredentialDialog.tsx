@@ -3,13 +3,9 @@
 import CustomDialogHeader from "@/components/CustomDialogHeader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Layers2Icon, Loader2 } from "lucide-react";
+import { Loader2, ShieldEllipsis } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  createWorkflowSchema,
-  createWorkflowSchemaType,
-} from "../../../../../schema/workflow";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -23,9 +19,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  createCredentialSchema,
+  createCredentialSchemaType,
+} from "../../../../../schema/credential";
+import { createCredential } from "@/actions/credentials/createCredential";
 
 /**
  * Render a button-triggered modal containing a validated form to create a new workflow.
@@ -40,31 +40,27 @@ import { useRouter } from "next/navigation";
  * @param triggerText - Optional text for the dialog trigger button; defaults to `"Create workflow"`.
  * @returns A JSX element that renders the dialog and its contained form.
  */
-function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
+function CreateCredentialDialog({ triggerText }: { triggerText?: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const form = useForm<createWorkflowSchemaType>({
-    resolver: zodResolver(createWorkflowSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-    },
+  const form = useForm<createCredentialSchemaType>({
+    resolver: zodResolver(createCredentialSchema),
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: CreateWorkflow,
-    onSuccess: (data) => {
-      toast.success("Workflow created", { id: "create-workflow" });
-      router.push(`/workflows/editor/${data.id}`);
+    mutationFn: createCredential,
+    onSuccess: (url) => {
+      toast.success("Credential created", { id: "create-credential" });
+      router.push(`/credential/editor/${url}`);
     },
     onError: () => {
-      toast.error("Failed to create workflow", { id: "create-workflow" });
+      toast.error("Failed to create credential", { id: "create-credential" });
     },
   });
 
   const onSubmit = useCallback(
-    (values: createWorkflowSchemaType) => {
-      toast.loading("Creating workflow...", { id: "create-workflow" });
+    (values: createCredentialSchemaType) => {
+      toast.loading("Creating credential...", { id: "create-credential" });
       mutate(values);
     },
     [mutate]
@@ -78,14 +74,10 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button>{triggerText ?? "Create workflow"}</Button>
+        <Button>{triggerText ?? "Create"}</Button>
       </DialogTrigger>
       <DialogContent className="px-0">
-        <CustomDialogHeader
-          icon={Layers2Icon}
-          title={"Create Workflow"}
-          subTitle="Start building your workflow"
-        />
+        <CustomDialogHeader icon={ShieldEllipsis} title={"Create credential"} />
         <div className="p-6">
           <Form {...form}>
             <form
@@ -105,7 +97,9 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Choose a descriptive and unique name
+                      Enter a unique and descriptive name for the credential or{" "}
+                      <br />
+                      This name will be used to idenitify the credential
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -113,19 +107,22 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
               />
               <FormField
                 control={form.control}
-                name="description"
+                name="value"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex gap-1 items-center">
-                      Description
+                      Value
                       <p className="text-xs text-muted-foreground">
-                        (optional)
+                        (required)
                       </p>
                     </FormLabel>
                     <FormControl>
                       <Textarea className="resize-none" {...field} />
                     </FormControl>
-                    <FormDescription>Give it a description</FormDescription>
+                    <FormDescription>
+                      Enter the value associated with this credential <br />{" "}
+                      This value will be securely encrypted and stored
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -141,4 +138,4 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
   );
 }
 
-export default CreateWorkflowDialog;
+export default CreateCredentialDialog;

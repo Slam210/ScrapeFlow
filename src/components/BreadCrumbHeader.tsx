@@ -2,7 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import React from "react";
-import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from "./ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "./ui/breadcrumb";
 import { MobileSidebar } from "./Sidebar";
 
 /**
@@ -38,6 +43,7 @@ export default function BreadCrumbHeader() {
               >
                 {crumb.label}
               </BreadcrumbLink>
+              {index !== crumbs.length - 1 && <BreadcrumbSeparator />}
             </React.Fragment>
           ))}
         </BreadcrumbList>
