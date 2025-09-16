@@ -16,16 +16,16 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useId } from "react";
 
 /**
- * Renders a labeled dropdown for a node parameter and reports selection changes.
+ * Renders a labeled credential selector and reports selection changes.
  *
- * Renders the parameter's name (with a red asterisk if required) and a Select dropdown populated
- * from `param.options`. When the user chooses an option, `updateNodeParamValue` is invoked with the
- * selected option's `value`.
+ * Fetches the current user's credentials and renders them as options in a dropdown.
+ * Displays `param.name` as the label and a red asterisk when `param.required` is true.
+ * When the user selects an option, `updateNodeParamValue` is called with the selected credential id.
  *
- * @param param - Parameter descriptor. Expected to include `name: string`, optional `required: boolean`, and optional `options: OptionType[]` where each option has `value` and `label`.
- * @param updateNodeParamValue - Callback invoked with the selected option value when the selection changes.
- * @param value - Current or default selected value for the dropdown.
- * @returns A React element containing the labeled select control.
+ * @param param - Parameter descriptor; component uses `param.name` and `param.required` to render the label.
+ * @param updateNodeParamValue - Callback invoked with the selected credential id when the selection changes.
+ * @param value - Current or default selected credential id.
+ * @returns A React element containing the labeled select control populated with the user's credentials.
  */
 export default function CredentialParam({
   param,

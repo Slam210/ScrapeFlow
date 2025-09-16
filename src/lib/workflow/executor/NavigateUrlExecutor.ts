@@ -1,6 +1,13 @@
 import { ExecutionEnvironment } from "@/types/executor";
 import { NavigateUrlTask } from "../task/NavigateUrl";
 
+/**
+ * Navigates the runtime page to the URL provided in the task input.
+ *
+ * Validates the "URL" input and that a page instance is available; if both are present, calls the page's navigation method and logs a success message. On validation failure or any runtime error the function logs an error and returns false.
+ *
+ * @returns A promise that resolves to `true` if navigation succeeded, or `false` if the input was invalid, the page was unavailable, or an error occurred.
+ */
 export async function NavigateUrlExecutor(
   environment: ExecutionEnvironment<typeof NavigateUrlTask>
 ): Promise<boolean> {
