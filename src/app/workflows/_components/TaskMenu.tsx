@@ -14,20 +14,19 @@ import { CoinsIcon } from "lucide-react";
 import React from "react";
 
 /**
- * Sidebar containing draggable task buttons organized into accordion sections.
+ * Sidebar component that renders a fixed-width, scrollable catalog of draggable task buttons.
  *
- * Renders a fixed-width aside with an Accordion that is open by default for the
- * "interactions", "extraction", "timing", and "results" sections. Each section
- * lists draggable TaskMenuButton entries that represent workflow tasks:
- * - User Interactions: FILL_INPUT, CLICK_ELEMENT
- * - Data extraction: PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT
- * - Timing controls: WAIT_FOR_ELEMENT, DELAY
- * - Result Delivery: DELIVER_VIA_WEBHOOK
+ * Organized as an Accordion (multiple open) with sections for:
+ * - User Interactions (e.g., NAVIGATE_URL, FILL_INPUT, CLICK_ELEMENT, SCROLL_TO_ELEMENT)
+ * - Data extraction (e.g., PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT, EXTRACT_DATA_WITH_AI)
+ * - Data storage (e.g., READ_PROPERTY_FROM_JSON, ADD_PROPERTY_TO_JSON)
+ * - Timing controls (e.g., WAIT_FOR_ELEMENT, DELAY)
+ * - Result Delivery (e.g., DELIVER_VIA_WEBHOOK)
  *
- * Dragging a button sets a React Flow payload for the corresponding TaskType so
- * the task can be dropped into a workflow/canvas.
+ * Each TaskMenuButton is draggable and sets an "application/reactflow" dataTransfer payload containing the TaskType,
+ * allowing tasks to be dropped into a React Flow canvas.
  *
- * @returns A JSX element for the task menu sidebar.
+ * @returns A JSX element representing the task menu sidebar.
  */
 export default function TaskMenu() {
   return (

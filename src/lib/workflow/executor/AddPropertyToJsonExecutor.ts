@@ -1,6 +1,19 @@
 import { ExecutionEnvironment } from "@/types/executor";
 import { AddPropertyToJsonTask } from "../task/AddPropoertyToJson";
 
+/**
+ * Adds or updates a property on a JSON object provided as a string input.
+ *
+ * Expects three inputs from the execution environment:
+ * - "JSON": a JSON string to parse,
+ * - "Property name": the property key to add or update,
+ * - "Property value": the value to assign to that property (stored as a string).
+ *
+ * On success the executor sets the output "Updated JSON" to the stringified updated JSON and resolves to `true`.
+ * If any input is missing/empty or an error occurs (including JSON parse errors), it logs an error and resolves to `false`.
+ *
+ * @returns `true` if the property was added/updated and the output was set; otherwise `false`.
+ */
 export async function AddPropertyToJsonExecutor(
   environment: ExecutionEnvironment<typeof AddPropertyToJsonTask>
 ): Promise<boolean> {

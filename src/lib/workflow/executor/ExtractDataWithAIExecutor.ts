@@ -4,6 +4,22 @@ import prisma from "@/lib/prisma";
 import { symmetricDecrypt } from "@/lib/encryption";
 import OpenAI from "openai";
 
+/**
+ * Executes an AI-driven extraction flow: validates inputs, fetches and decrypts an API credential,
+ * calls OpenAI to extract structured data from provided content using the provided prompt, and stores
+ * the AI response as an output.
+ *
+ * Detailed behavior:
+ * - Reads required inputs named "Credentials", "Prompt", and "Content" from the execution environment.
+ * - Retrieves the credential by id and decrypts it; fails and returns false if missing or undecryptable.
+ * - Calls OpenAI Chat Completions (model "gpt-4o-mini") with a system instruction plus the provided content
+ *   and prompt. Expects the model to return a valid JSON array representing the extracted data.
+ * - On success sets the output key "Extracted data" to the stringified OpenAI response object and returns true.
+ * - On any validation failure, missing credential, decryption failure, API issue, empty AI content, or uncaught exception,
+ *   logs an error and returns false.
+ *
+ * @returns A promise that resolves to `true` if extraction succeeded and output was set, otherwise `false`.
+ */
 export async function ExtractDataWithAIExecutor(
   environment: ExecutionEnvironment<typeof ExtractDataWithAITask>
 ): Promise<boolean> {
