@@ -33,12 +33,6 @@ export async function ExtractDataWithAIExecutor(
       return false;
     }
 
-    const page = environment.getPage();
-    if (!page) {
-      environment.log.error("runtime -> page not available");
-      return false;
-    }
-
     // Get credential from DB
     const credential = await prisma.credential.findUnique({
       where: { id: credentials },
