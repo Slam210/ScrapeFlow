@@ -4,13 +4,15 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
 /**
- * Delete a workflow owned by the currently authenticated user and revalidate the workflows page.
+ * Delete a workflow owned by the currently authenticated user and return the workflows path.
  *
- * Deletes the workflow with the given `id` only if it belongs to the authenticated user, then triggers
- * cache revalidation for the `/workflows` path so UI can reflect the deletion.
+ * Deletes the workflow with the provided `id` only if it belongs to the authenticated user.
+ * Returns the string `"/workflows"` on success.
  *
- * @param id - The ID of the workflow to delete (must be owned by the current user).
- * @throws Error - Throws "Unauthenticated" if there is no authenticated user.
+ * @param id - ID of the workflow to delete.
+ * @returns The path `"/workflows"` to indicate the workflows page (returned as a string).
+ * @throws Error - "Unauthenticated" if there is no authenticated user.
+ * @throws Error - "Workflow not found or not owned by user" if no matching workflow was deleted.
  */
 export async function DeleteWorkflow(id: string) {
   const { userId } = await auth();

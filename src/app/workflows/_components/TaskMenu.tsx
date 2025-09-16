@@ -12,14 +12,20 @@ import { TaskType } from "@/types/task";
 import React from "react";
 
 /**
- * Sidebar menu that exposes data-extraction task buttons as draggable items.
+ * Sidebar containing draggable task buttons organized into accordion sections.
  *
- * Renders a fixed-width aside containing an accordion with a single "Data extraction"
- * section. The section contains TaskMenuButton entries for available extraction tasks
- * (Page to HTML and Extract text from element) which are intended to be dragged into
- * a workflow/canvas.
+ * Renders a fixed-width aside with an Accordion that is open by default for the
+ * "interactions", "extraction", "timing", and "results" sections. Each section
+ * lists draggable TaskMenuButton entries that represent workflow tasks:
+ * - User Interactions: FILL_INPUT, CLICK_ELEMENT
+ * - Data extraction: PAGE_TO_HTML, EXTRACT_TEXT_FROM_ELEMENT
+ * - Timing controls: WAIT_FOR_ELEMENT, DELAY
+ * - Result Delivery: DELIVER_VIA_WEBHOOK
  *
- * @returns A JSX element representing the task menu sidebar.
+ * Dragging a button sets a React Flow payload for the corresponding TaskType so
+ * the task can be dropped into a workflow/canvas.
+ *
+ * @returns A JSX element for the task menu sidebar.
  */
 export default function TaskMenu() {
   return (

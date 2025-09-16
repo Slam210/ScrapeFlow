@@ -1,6 +1,15 @@
 import { ExecutionEnvironment } from "@/types/executor";
 import { DeliverViaWebhookTask } from "../task/DeliverViaWebhook";
 
+/**
+ * Executes a DeliverViaWebhook task by POSTing the task body to the configured target URL.
+ *
+ * Sends an HTTP POST with a JSON body to the "Target URL" input and logs the JSON response.
+ * Returns true only if the request completes with HTTP 200 and the response JSON is successfully parsed and logged.
+ * Logs an error and returns false if required inputs are missing, the response status is not 200, or an exception occurs.
+ *
+ * @returns A promise that resolves to `true` on a successful 200 response with parsed JSON; `false` otherwise.
+ */
 export async function DeliverViaWebhookExecutor(
   environment: ExecutionEnvironment<typeof DeliverViaWebhookTask>
 ): Promise<boolean> {
