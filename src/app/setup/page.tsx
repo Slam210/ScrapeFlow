@@ -2,7 +2,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SetupUser } from "@/actions/billing/setupUser";
 
 export default function SetupPage() {

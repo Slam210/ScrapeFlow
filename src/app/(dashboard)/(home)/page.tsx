@@ -9,7 +9,7 @@ import StatsCard from "./_components/StatsCard";
 import { GetWorkflowExecutionStats } from "@/actions/analytics/getWorkflowExecutionStats";
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
-import CreditUsageChart from "./billing/_components/CreditUsageChart";
+import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
 function HomePage({
   searchParams,
