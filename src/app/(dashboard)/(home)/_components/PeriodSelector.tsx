@@ -39,19 +39,22 @@ export default function PeriodSelector({
     <Select
       onValueChange={(value) => {
         const [month, year] = value.split("-");
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams(Array.from(searchParams.entries()));
         params.set("month", month);
         params.set("year", year);
         router.push(`?${params.toString()}`);
       }}
-      value={`${MONTH_NAMES[selectedPeriod.month]} ${selectedPeriod.year}`}
+      value={`${selectedPeriod.month}-${selectedPeriod.year}`}
     >
       <SelectTrigger>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {periods.map((period, index) => (
-          <SelectItem key={index} value={`${period.month}-${period.year}`}>
+        {periods.map((period) => (
+          <SelectItem
+            key={`${period.year}-${period.month}`}
+            value={`${period.month}-${period.year}`}
+          >
             {`${MONTH_NAMES[period.month]} ${period.year}`}
           </SelectItem>
         ))}

@@ -53,13 +53,13 @@ export default function ExecutionStatusChart({ data }: { data: ChartData }) {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={"data"}
+              dataKey={"date"}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value);
+              tickFormatter={(value: string) => {
+                const date = new Date(`${value}T00:00:00`);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -70,23 +70,22 @@ export default function ExecutionStatusChart({ data }: { data: ChartData }) {
             <ChartTooltip
               content={<ChartTooltipContent className="w-[250px]" />}
             />
+            +{" "}
             <Area
-              dataKey={"success"}
-              min={0}
-              type={"bump"}
-              fill="var(--color-successfull)"
+              dataKey="success"
+              type="monotone"
+              fill={chartConfig.success.color}
               fillOpacity={0.6}
-              stroke="var(--color-successfull)"
-              stackId={"a"}
+              stroke={chartConfig.success.color}
+              stackId="a"
             />
             <Area
-              dataKey={"failed"}
-              min={0}
-              type={"bump"}
-              fill="var(--color-failed)"
+              dataKey="failed"
+              type="monotone"
+              fill={chartConfig.failed.color}
               fillOpacity={0.6}
-              stroke="var(--color-failed)"
-              stackId={"a"}
+              stroke={chartConfig.failed.color}
+              stackId="a"
             />
           </AreaChart>
         </ChartContainer>

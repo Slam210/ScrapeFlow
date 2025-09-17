@@ -18,10 +18,16 @@ function HomePage({
 }) {
   const currentDate = new Date();
   const { month, year } = searchParams;
-  const period: Period = {
-    month: month ? parseInt(month) : currentDate.getMonth(),
-    year: year ? parseInt(year) : currentDate.getFullYear(),
-  };
+  const parsedMonth = month !== undefined ? Number(month) : NaN;
+  const parsedYear = year !== undefined ? Number(year) : NaN;
+  const safeMonth =
+    Number.isInteger(parsedMonth) && parsedMonth >= 0 && parsedMonth <= 11
+      ? parsedMonth
+      : currentDate.getMonth();
+  const safeYear = Number.isInteger(parsedYear)
+    ? parsedYear
+    : currentDate.getFullYear();
+  const period: Period = { month: safeMonth, year: safeYear };
 
   return (
     <div className="flex flex-1 flex-col h-full">

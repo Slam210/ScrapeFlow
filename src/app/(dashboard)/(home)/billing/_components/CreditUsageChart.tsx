@@ -59,13 +59,13 @@ export default function CreditUsageChart({
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={"data"}
+              dataKey={"date"}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value);
+              tickFormatter={(value: string) => {
+                const date = new Date(`${value}T00:00:00`);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -77,19 +77,19 @@ export default function CreditUsageChart({
               content={<ChartTooltipContent className="w-[250px]" />}
             />
             <Bar
-              dataKey={"success"}
-              fill="var(--color-successfull)"
+              dataKey="success"
+              fill={chartConfig.success.color}
               fillOpacity={0.8}
-              stroke="var(--color-successfull)"
-              stackId={"a"}
+              stroke={chartConfig.success.color}
+              stackId="a"
               radius={[0, 0, 4, 4]}
             />
             <Bar
-              dataKey={"failed"}
-              fill="var(--color-failed)"
+              dataKey="failed"
+              fill={chartConfig.failed.color}
               fillOpacity={0.8}
-              stroke="var(--color-failed)"
-              stackId={"a"}
+              stroke={chartConfig.failed.color}
+              stackId="a"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
