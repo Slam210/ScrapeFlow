@@ -39,15 +39,14 @@ const routes = [
 ];
 
 /**
- * Desktop sidebar navigation component shown on medium and larger screens.
+ * Desktop-only fixed left navigation showing the app logo, available credits, and route links.
  *
- * Renders a fixed vertical navigation panel with the app Logo and a list of route links.
- * The active route is determined from the current pathname by selecting the first route
- * whose non-empty `href` is included in the path; if none match, the first route in
- * the `routes` array is used as the fallback. Each route link displays its icon and label
- * and receives an active or default sidebar styling via `buttonVariants`.
+ * Renders a vertical sidebar (visible on `md+` breakpoints) that lists the predefined `routes`
+ * with their icons and labels. The active route is determined by finding the first route where
+ * `route.href !== "/"` and `pathName.startsWith(route.href)`; if none match, `routes[0]` is used
+ * as a fallback. Each link is styled via `buttonVariants` as either the active or default sidebar item.
  *
- * @returns The sidebar JSX element (visible on `md+` breakpoints).
+ * @returns The sidebar JSX element (visible on `md+` screens).
  */
 export function DesktopSidebar() {
   const pathName = usePathname();
@@ -86,14 +85,11 @@ export function DesktopSidebar() {
 }
 
 /**
- * Mobile-only sidebar: a hamburger-triggered left sheet that displays the app logo, available-credits badge, and route links.
+ * Mobile-only left navigation presented as a hamburger-triggered sheet.
  *
- * The sheet opens via an internal `isOpen` state controlled by the hamburger button. The active route is the first
- * non-root route whose `href` is a prefix of the current pathname; if none match, the first route in `routes` is used.
- * Clicking a route link closes the sheet.
- *
- * Each route link renders its icon (size 20) and label, and applies `buttonVariants` with `sidebarActiveItem` for the
- * active route or `sidebarItem` otherwise.
+ * Renders the app Logo, the available-credits badge, and a vertical list of route links.
+ * The sheet open state is controlled internally; tapping the hamburger opens the sheet and tapping any route closes it.
+ * The active route is determined by selecting the first non-root route whose `href` is a prefix of the current pathname; if none match, the first route in `routes` is used. Active links receive the `sidebarActiveItem` variant via `buttonVariants`.
  *
  * @returns JSX element for the mobile sidebar sheet.
  */

@@ -12,20 +12,19 @@ import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeri
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
 /**
- * Home dashboard page component.
+ * Page component that renders the home dashboard for a selected period.
  *
- * Renders the Home analytics view for the selected period. If `searchParams.month` or
- * `searchParams.year` are not provided, the current month and year are used. The page
- * displays a header with a period selector and three Suspense-wrapped sections:
- * stats cards, workflow execution status chart, and daily credit usage chart.
+ * Parses optional `month` and `year` values from `searchParams` (typically URL query params)
+ * and builds a safe `Period` used throughout the page. If `month` is not an integer in the
+ * range 0–11, the current month is used. If `year` is not an integer, the current year is used.
+ * Renders period selector, stats cards, execution-status chart, and credit-usage chart; each
+ * data-driven section is wrapped in React Suspense with appropriate fallbacks.
  *
- * @param searchParams - Optional query parameters:
- *   - `month` and `year` are numeric strings (when provided they are parsed with `parseInt`).
- *     If omitted, the component falls back to the current month (0–11 from `Date.getMonth()`)
- *     and current year from the client clock.
- * @returns A React element representing the Home page.
+ * @param searchParams - Object containing optional `month` and `year` string values (from URL).
+ *                        `month` is interpreted as a zero-based month (0 = January).
+ * @returns A React element for the home dashboard.
  */
-function HomePage({
+async function HomePage({
   searchParams,
 }: {
   searchParams: { month?: string; year?: string };

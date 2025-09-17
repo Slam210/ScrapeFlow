@@ -2,6 +2,12 @@ import Logo from "@/components/Logo";
 import { Separator } from "@/components/ui/separator";
 import { Loader2Icon } from "lucide-react";
 
+/**
+ * Full-screen, centered loading UI shown during account setup.
+ *
+ * Renders the app logo, a separator, and a row with a spinning loader icon
+ * alongside the text "Setting up your account". Stateless and purely presentational.
+ */
 export default function Loading() {
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center gap-4">
