@@ -13,7 +13,7 @@ export type CreditsPack = {
   priceId: string;
 };
 
-export const CreditsPack: CreditsPack[] = [
+export const CREDIT_PACKS: CreditsPack[] = [
   {
     id: PackId.SMALL,
     name: "Small Pack",
@@ -24,7 +24,7 @@ export const CreditsPack: CreditsPack[] = [
   },
   {
     id: PackId.MEDIUM,
-    name: "Large Pack",
+    name: "Medium Pack",
     label: "2,000 credits",
     credits: 2000,
     price: 1999, // 19.99
@@ -40,5 +40,5 @@ export const CreditsPack: CreditsPack[] = [
   },
 ];
 
-export const getCreditsPack = (id: PackId) =>
-  CreditsPack.find((p) => (p.id = id));
+export const getCreditsPack = (id: PackId): CreditsPack | undefined =>
+  CREDIT_PACKS.find((p) => p.id === id);

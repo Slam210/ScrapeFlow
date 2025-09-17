@@ -113,4 +113,6 @@ model UserPurchase {
   amount Int
   currency String
   date DateTime @default(now())
+  @@unique([stripeId])
+  @@index([userId, date])
 }
