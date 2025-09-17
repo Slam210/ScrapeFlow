@@ -28,7 +28,10 @@ export async function PurchaseCredits(packId: PackId) {
   if (!selectedPack) {
     throw new Error("Invalid pack");
   }
-  const priceId = selectedPack?.priceId;
+  const priceId = selectedPack.priceId;
+  if (!priceId) {
+    throw new Error("Stripe price ID not configured for selected pack");
+  }
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -39,7 +42,7 @@ export async function PurchaseCredits(packId: PackId) {
     cancel_url: getAppUrl("billing"),
     metadata: {
       userId,
-      packId,
+      packId: String(packId),
     },
     line_items: [
       {

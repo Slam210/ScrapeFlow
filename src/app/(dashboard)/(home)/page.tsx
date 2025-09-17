@@ -24,13 +24,13 @@ import CreditUsageChart from "../billing/_components/CreditUsageChart";
  *                        `month` is interpreted as a zero-based month (0 = January).
  * @returns A React element for the home dashboard.
  */
-function HomePage({
+async function HomePage({
   searchParams,
 }: {
   searchParams: { month?: string; year?: string };
 }) {
   const currentDate = new Date();
-  const { month, year } = searchParams;
+  const { month, year } = await searchParams;
   const parsedMonth = month !== undefined ? Number(month) : NaN;
   const parsedYear = year !== undefined ? Number(year) : NaN;
   const safeMonth =

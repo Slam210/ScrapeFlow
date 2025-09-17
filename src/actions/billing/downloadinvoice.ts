@@ -21,20 +21,23 @@ export async function DownloadInvoice(id: string) {
     throw new Error("Unauthenticated");
   }
 
-  const purchase = await prisma.userPurchase.findUnique({
-    where: {
-      id,
-      userId,
-    },
+  const purchase = await prisma.userPurchase.findFirst({
+    where: { id, userId },
   });
 
   if (!purchase) {
     throw new Error("Bad request");
   }
 
-  const session = await stripe.checkout.sessions.retrieve(purchase.stripeId);
-
-  const invoice = await stripe.invoices.retrieve(session.invoice as string);
-
+  const session = await stripe.checkout.sessions.retrieve(purchase.stripeId, {
+    expand: ["invoice"],
+  });
+  const invoice =
+    typeof session.invoice === "string"
+      ? await stripe.invoices.retrieve(session.invoice)
+      : session.invoice;
+  if (!invoice?.hosted_invoice_url) {
+    throw new Error("Invoice not available yet");
+  }
   return invoice.hosted_invoice_url;
 }
