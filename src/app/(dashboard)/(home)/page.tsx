@@ -11,6 +11,19 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
+/**
+ * Page component that renders the home dashboard for a selected period.
+ *
+ * Parses optional `month` and `year` values from `searchParams` (typically URL query params)
+ * and builds a safe `Period` used throughout the page. If `month` is not an integer in the
+ * range 0–11, the current month is used. If `year` is not an integer, the current year is used.
+ * Renders period selector, stats cards, execution-status chart, and credit-usage chart; each
+ * data-driven section is wrapped in React Suspense with appropriate fallbacks.
+ *
+ * @param searchParams - Object containing optional `month` and `year` string values (from URL).
+ *                        `month` is interpreted as a zero-based month (0 = January).
+ * @returns A React element for the home dashboard.
+ */
 function HomePage({
   searchParams,
 }: {

@@ -5,6 +5,19 @@ import { stripe } from "@/lib/stripe/stripe";
 import { getCreditsPack, PackId } from "@/types/billing";
 import { auth } from "@clerk/nextjs/server";
 
+/**
+ * Initiates a Stripe Checkout session to purchase a credits pack and returns the redirect URL.
+ *
+ * Validates the authenticated user and the requested pack, creates a Checkout session in payment mode
+ * with invoice creation enabled, sets success/cancel URLs to the billing page, and attaches `userId`
+ * and `packId` as metadata.
+ *
+ * @param packId - Identifier of the credits pack to purchase.
+ * @returns The Stripe Checkout session URL for client redirection.
+ * @throws Error "Unauthenticated" if there is no authenticated user.
+ * @throws Error "Invalid pack" if the provided `packId` does not match any available pack.
+ * @throws Error "Cannot create stripe session" if Stripe fails to create a session.
+ */
 export async function PurchaseCredits(packId: PackId) {
   const { userId } = await auth();
   if (!userId) {

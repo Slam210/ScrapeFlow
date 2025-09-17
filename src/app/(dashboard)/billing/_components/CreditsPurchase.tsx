@@ -17,6 +17,17 @@ import { useMutation } from "@tanstack/react-query";
 import { CoinsIcon, CreditCard } from "lucide-react";
 import React, { useState } from "react";
 
+/**
+ * Renders a card UI that lets the user select a credit pack and purchase it.
+ *
+ * Shows available packs from `CreditsPack` as selectable rows, tracks the selected
+ * pack in local state (initialized to `PackId.MEDIUM`), and invokes `PurchaseCredits`
+ * via a React Query mutation when the "Purchase credits" button is clicked.
+ * The purchase button is disabled while the mutation is pending. Prices are shown
+ * in dollars (price in cents converted with `(price / 100).toFixed(2)`).
+ *
+ * @returns The JSX element for the credits purchase UI.
+ */
 export default function CreditsPurchase() {
   const [selectedPack, setSelectedPack] = useState(PackId.MEDIUM);
 
