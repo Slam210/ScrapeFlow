@@ -58,8 +58,8 @@ export default function ExecutionStatusChart({ data }: { data: ChartData }) {
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value: string) => {
-                const date = new Date(`${value}T00:00:00`);
+              tickFormatter={(value) => {
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -70,21 +70,20 @@ export default function ExecutionStatusChart({ data }: { data: ChartData }) {
             <ChartTooltip
               content={<ChartTooltipContent className="w-[250px]" />}
             />
-            +{" "}
             <Area
               dataKey="success"
               type="monotone"
-              fill={chartConfig.success.color}
+              fill="#4ade80" // light green
+              stroke="#4ade80"
               fillOpacity={0.6}
-              stroke={chartConfig.success.color}
               stackId="a"
             />
             <Area
               dataKey="failed"
               type="monotone"
-              fill={chartConfig.failed.color}
+              fill="#166534" // dark green
+              stroke="#166534"
               fillOpacity={0.6}
-              stroke={chartConfig.failed.color}
               stackId="a"
             />
           </AreaChart>
