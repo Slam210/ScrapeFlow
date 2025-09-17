@@ -10,6 +10,18 @@ import { eachDayOfInterval, format } from "date-fns";
 type Stats = Record<string, { success: number; failed: number }>;
 const { COMPLETED, FAILED } = ExecutionPhaseStatus;
 
+/**
+ * Compute per-day credit usage (successful vs. failed) for the authenticated user over a period.
+ *
+ * Converts the provided `period` to a date range, fetches execution phases for the current user
+ * whose `startedAt` falls within that range and whose status is COMPLETED or FAILED, and
+ * aggregates credits consumed per day into `success` (COMPLETED) and `failed` (FAILED) totals.
+ *
+ * @param period - The period to query (converted to a start/end date via `PeriodToDateRange`)
+ * @returns An array sorted by date of objects with shape `{ date: string, success: number, failed: number }`
+ *          where `date` is formatted as `yyyy-MM-dd`.
+ * @throws Error - if the current user is not authenticated ("Unauthenticated").
+ */
 export async function GetCreditUsageInPeriod(period: Period) {
   const { userId } = await auth();
   if (!userId) {

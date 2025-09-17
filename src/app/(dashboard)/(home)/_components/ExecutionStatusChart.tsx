@@ -31,6 +31,14 @@ const chartConfig = {
   },
 };
 
+/**
+ * Renders a dashboard card containing a stacked area chart of daily workflow executions.
+ *
+ * The chart shows two stacked series — successful and failed executions — over time,
+ * formatted with short month/day ticks, a legend, and a tooltip.
+ *
+ * @param data - Chart data series; each entry should include a date value under `data`
+ *   (string | number | Date) and numeric counts for `success` and `failed`.
 export default function ExecutionStatusChart({ data }: { data: ChartData }) {
   return (
     <Card>
