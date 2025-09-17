@@ -65,6 +65,12 @@ async function HomePage({
   );
 }
 
+/**
+ * Server component that fetches available periods and renders a PeriodSelector with the given selection.
+ *
+ * @param selectedPeriod - The period to mark as selected in the rendered selector.
+ * @returns The rendered PeriodSelector element populated with fetched periods.
+ */
 async function PeriodSelectorWrapper({
   selectedPeriod,
 }: {
@@ -75,6 +81,15 @@ async function PeriodSelectorWrapper({
   return <PeriodSelector periods={periods} selectedPeriod={selectedPeriod} />;
 }
 
+/**
+ * Fetches aggregated stat values for a period and renders three summary stat cards.
+ *
+ * Renders cards for workflow executions, phase executions, and credits consumed using
+ * fetched values for the provided period.
+ *
+ * @param selectedPeriod - The period to fetch statistics for (month/year).
+ * @returns A promise resolving to a React element that contains the three stat cards.
+ */
 async function StatsCards({ selectedPeriod }: { selectedPeriod: Period }) {
   const data = await GetStatsCardsValues(selectedPeriod);
 
@@ -99,6 +114,14 @@ async function StatsCards({ selectedPeriod }: { selectedPeriod: Period }) {
   );
 }
 
+/**
+ * Renders a three-column skeleton placeholder matching the StatsCard layout.
+ *
+ * Useful as a loading fallback while card data is being fetched; produces three Skeleton blocks
+ * arranged responsively.
+ *
+ * @returns A JSX element containing three Skeleton placeholders in a responsive grid.
+ */
 function StatsCardSkeleton() {
   return (
     <div className="grid gap-3 lg:gap-8 lg:grid-cols-3">
@@ -109,6 +132,12 @@ function StatsCardSkeleton() {
   );
 }
 
+/**
+ * Fetches workflow execution statistics for the given period and renders an execution status chart.
+ *
+ * @param selectedPeriod - The period to query workflow execution statistics for.
+ * @returns A React element that renders the execution status chart populated with the fetched data.
+ */
 async function StatsExecutionStatus({
   selectedPeriod,
 }: {
@@ -118,6 +147,15 @@ async function StatsExecutionStatus({
   return <ExecutionStatusChart data={data} />;
 }
 
+/**
+ * Renders a chart of daily credit usage for the provided period.
+ *
+ * Fetches daily credit consumption for `selectedPeriod` and returns a
+ * CreditUsageChart populated with the fetched data.
+ *
+ * @param selectedPeriod - The period (month/year) to load daily credit usage for.
+ * @returns A React element containing the credit-usage chart.
+ */
 async function CreditsUsageInPeriod({
   selectedPeriod,
 }: {

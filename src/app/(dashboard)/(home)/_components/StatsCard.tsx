@@ -9,6 +9,17 @@ interface Props {
   icon: LucideIcon;
 }
 
+/**
+ * Dashboard statistic card that displays a title, an animated numeric value, and a decorative icon.
+ *
+ * Renders a Card with the provided `title` as the header, `value` shown using an animated count-up,
+ * and `icon` rendered as a large, low-opacity background graphic for decoration.
+ *
+ * @param props.title - Heading text shown in the card header.
+ * @param props.value - Numeric value displayed and animated via ReactCountUpWrapper.
+ * @param props.icon - Icon component (LucideIcon) rendered decoratively behind the header.
+ * @returns A React element representing the stats card.
+ */
 export default function StatsCard(props: Props) {
   return (
     <Card className="relative overflow-hidden h-full">

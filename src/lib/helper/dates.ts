@@ -48,6 +48,15 @@ export function DatesToDurationString(
   return `${duration.minutes || 0}m ${duration.seconds || 0}s`;
 }
 
+/**
+ * Returns the start and end Date for the month described by `period`.
+ *
+ * The function constructs a Date from `period.year` and `period.month` and returns
+ * the first and last instants of that month.
+ *
+ * @param period - Object with `year` and `month` (month is 0-indexed: 0 = January)
+ * @returns An object with `startDate` (start of month) and `endDate` (end of month)
+ */
 export function PeriodToDateRange(period: Period) {
   const startDate = startOfMonth(new Date(period.year, period.month));
   const endDate = endOfMonth(new Date(period.year, period.month));
