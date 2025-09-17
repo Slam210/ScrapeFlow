@@ -105,6 +105,10 @@
   --sidebar-accent-foreground: oklch(0.95 0.02 0);
   --sidebar-border: oklch(0.2 0.03 260 / 20%);
   --sidebar-ring: oklch(0.55 0.03 260);
+
+  .react-flow__controls-button {
+    @apply !bg-accent;
+  }
 }
 
 @layer base {
@@ -130,4 +134,8 @@
   .react-flow__controls-button {
     @apply !bg-accent;
   }
+}
+
+.react-flow__attribution {
+  background: transparent !important;
 }
