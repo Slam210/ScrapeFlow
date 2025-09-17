@@ -9,6 +9,16 @@ import { eachDayOfInterval, format } from "date-fns";
 
 type Stats = Record<string, { success: number; failed: number }>;
 
+/**
+ * Returns daily counts of workflow executions (success and failed) for the authenticated user over the given period.
+ *
+ * Computes a date range from `period`, includes every day in the range (even those with zero counts), and aggregates
+ * executions by their `startedAt` date and `WorkflowExecutionStatus` (COMPLETED → success, FAILED → failed).
+ *
+ * @param period - Preset period used to derive the start and end dates for the query.
+ * @returns An array of objects `{ date: string, success: number, failed: number }` where `date` is formatted as `yyyy-MM-dd`.
+ * @throws Error - If the request is unauthenticated (message: "Unauthenticated").
+ */
 export async function GetWorkflowExecutionStats(period: Period) {
   const { userId } = await auth();
   if (!userId) {

@@ -8,6 +8,19 @@ import { auth } from "@clerk/nextjs/server";
 
 const { COMPLETED, FAILED } = WorkflowExecutionStatus;
 
+/**
+ * Compute aggregated workflow statistics for the authenticated user within a given period.
+ *
+ * Queries completed or failed workflow executions started inside the date range derived from `period`,
+ * sums execution-level `creditsConsumed`, and counts executions and phases (only phases with non-null `creditsConsumed` are fetched).
+ *
+ * @param period - Time span to compute statistics for; converted to a start/end date range via `PeriodToDateRange`.
+ * @returns An object with:
+ *   - `workflowExecutions`: total number of matching workflow executions,
+ *   - `creditsConsumed`: sum of `creditsConsumed` across those executions,
+ *   - `phaseExecutions`: total number of fetched phases across those executions.
+ * @throws Error - Throws "Unauthenticated" if there is no authenticated user.
+ */
 export async function GetStatsCardsValues(period: Period) {
   const { userId } = await auth();
   if (!userId) {

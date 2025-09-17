@@ -31,6 +31,17 @@ const chartConfig = {
   },
 };
 
+/**
+ * Renders a card containing a stacked bar chart of credit usage over time.
+ *
+ * Displays two stacked series ("success" and "failed") per x-axis category and includes a title,
+ * description, legend, and tooltip.
+ *
+ * @param data - Chart data array where each item must include a `data` value (date or date-string used for the X axis) and numeric `success` and `failed` fields for the stacked values.
+ * @param title - Card title shown to the left of the chart icon.
+ * @param description - Short description displayed under the title.
+ * @returns A JSX element with the chart wrapped in the project's Card layout.
+ */
 export default function CreditUsageChart({
   data,
   title,
