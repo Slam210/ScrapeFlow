@@ -75,8 +75,8 @@ export default function CreditUsageChart({
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
-              tickFormatter={(value: string) => {
-                const date = new Date(`${value}T00:00:00`);
+              tickFormatter={(value) => {
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -88,19 +88,19 @@ export default function CreditUsageChart({
               content={<ChartTooltipContent className="w-[250px]" />}
             />
             <Bar
-              dataKey="success"
-              fill={chartConfig.success.color}
+              dataKey={"success"}
               fillOpacity={0.8}
-              stroke={chartConfig.success.color}
-              stackId="a"
+              fill="#4ade80" // light green
+              stroke="#4ade80"
+              stackId={"a"}
               radius={[0, 0, 4, 4]}
             />
             <Bar
-              dataKey="failed"
-              fill={chartConfig.failed.color}
+              dataKey={"failed"}
               fillOpacity={0.8}
-              stroke={chartConfig.failed.color}
-              stackId="a"
+              fill="#166534" // dark green
+              stroke="#166534"
+              stackId={"a"}
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

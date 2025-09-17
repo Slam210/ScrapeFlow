@@ -9,7 +9,7 @@ import StatsCard from "./_components/StatsCard";
 import { GetWorkflowExecutionStats } from "@/actions/analytics/getWorkflowExecutionStats";
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
-import CreditUsageChart from "./billing/_components/CreditUsageChart";
+import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
 /**
  * Home dashboard page component.
@@ -31,7 +31,7 @@ function HomePage({
   searchParams: { month?: string; year?: string };
 }) {
   const currentDate = new Date();
-  const { month, year } = searchParams;
+  const { month, year } = await searchParams;
   const parsedMonth = month !== undefined ? Number(month) : NaN;
   const parsedYear = year !== undefined ? Number(year) : NaN;
   const safeMonth =
