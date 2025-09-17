@@ -26,6 +26,15 @@ const MONTH_NAMES = [
   "December",
 ];
 
+/**
+ * Renders a month-year dropdown that updates the URL's `month` and `year` query parameters when a new period is selected.
+ *
+ * The select is populated from `periods` and displays `selectedPeriod`. Selecting an item updates the existing search params (preserving other parameters) and navigates to the updated query string.
+ *
+ * @param periods - Array of available periods to display in the dropdown.
+ * @param selectedPeriod - The currently selected period; used as the visible value.
+ * @returns The PeriodSelector React element.
+ */
 export default function PeriodSelector({
   periods,
   selectedPeriod,
