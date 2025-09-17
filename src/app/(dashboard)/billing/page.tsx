@@ -18,6 +18,16 @@ import CreditUsageChart from "./_components/CreditUsageChart";
 import { GetUserPurchaseHistory } from "@/actions/billing/getUserPurchaseHistory";
 import InvoiceButton from "./_components/InvoiceButton";
 
+/**
+ * Renders the Billing page for the dashboard.
+ *
+ * Composes the main billing UI: a page header ("Billing"), the current balance card,
+ * a credits purchase section, credit usage chart, and transaction history. The balance,
+ * usage, and transaction sections are loaded with React Suspense and use Skeleton
+ * fallbacks while their data-loading subcomponents are resolving.
+ *
+ * @returns A React element representing the billing page.
+ */
 export default function BillingPage() {
   return (
     <div>
@@ -36,6 +46,15 @@ export default function BillingPage() {
   );
 }
 
+/**
+ * Async React component that displays the user's available credit balance in a styled card.
+ *
+ * Fetches the current available credits with GetAvailibleCredits and renders the numeric value
+ * using ReactCountUpWrapper along with a decorative CoinsIcon and a footer note about workflows
+ * stopping when the balance reaches zero.
+ *
+ * @returns The rendered card element containing the balance display.
+ */
 async function BalanceCard() {
   const userBalance = await GetAvailibleCredits();
   return (
@@ -64,6 +83,14 @@ async function BalanceCard() {
   );
 }
 
+/**
+ * Renders a credit-usage chart for the current month.
+ *
+ * Builds a period object for the current month and year, fetches daily credit usage
+ * via `GetCreditUsageInPeriod`, and returns a `CreditUsageChart` populated with that data.
+ *
+ * @returns A React element (`CreditUsageChart`) showing daily credits consumed for the current month.
+ */
 async function CreditUsageCard() {
   const period: Period = {
     month: new Date().getMonth(),
@@ -79,6 +106,12 @@ async function CreditUsageCard() {
   );
 }
 
+/**
+ * Formats a Date into a human-readable string like "September 17, 2025".
+ *
+ * @param date - The Date to format.
+ * @returns The formatted date string in en-US locale (e.g., "Month Day, Year").
+ */
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -87,6 +120,16 @@ function formatDate(date: Date) {
   }).format(date);
 }
 
+/**
+ * Formats an amount given in minor currency units (e.g., cents) into an en-US currency string.
+ *
+ * The function divides `amount` by 100 to convert from minor units to major units, then formats
+ * the result using the `en-US` locale and the provided ISO currency code.
+ *
+ * @param amount - The monetary value in minor units (e.g., cents).
+ * @param currency - The ISO 4217 currency code to format with (e.g., "USD", "EUR").
+ * @returns The localized currency string (e.g., "$12.34").
+ */
 function formatAmount(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -94,6 +137,19 @@ function formatAmount(amount: number, currency: string) {
   }).format(amount / 100);
 }
 
+/**
+ * Renders the "Transaction History" card for the billing page.
+ *
+ * Fetches the user's purchase history and displays either a "No transactions yet"
+ * message when empty or a list of purchases. Each purchase row shows the
+ * formatted date, description, a localized formatted amount, and an InvoiceButton
+ * to download the invoice.
+ *
+ * The component awaits GetUserPurchaseHistory() to obtain data and therefore
+ * suspends (intended to be used inside a Suspense boundary).
+ *
+ * @returns A React element containing the transaction history card.
+ */
 async function TransactionHistoryCard() {
   const purchases = await GetUserPurchaseHistory();
   return (

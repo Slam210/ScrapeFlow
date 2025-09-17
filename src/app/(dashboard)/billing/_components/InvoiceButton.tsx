@@ -7,6 +7,16 @@ import { Loader2Icon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Button that triggers downloading an invoice by ID.
+ *
+ * Calls the DownloadInvoice mutation with the provided `id`. On success the browser
+ * navigates to the returned URL; on error a toast error is shown. While the
+ * request is pending the button is disabled and displays a spinner.
+ *
+ * @param id - Invoice identifier used to request the downloadable invoice
+ * @returns A React element rendering the invoice download button
+ */
 export default function InvoiceButton({ id }: { id: string }) {
   const mutation = useMutation({
     mutationFn: DownloadInvoice,
