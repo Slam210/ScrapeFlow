@@ -11,6 +11,8 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
+type SearchParams = Promise<{ month?: string; year?: string }>;
+
 /**
  * Page component that renders the home dashboard for a selected period.
  *
@@ -24,22 +26,21 @@ import CreditUsageChart from "../billing/_components/CreditUsageChart";
  *                        `month` is interpreted as a zero-based month (0 = January).
  * @returns A React element for the home dashboard.
  */
-async function HomePage({
-  searchParams,
-}: {
-  searchParams: { month?: string; year?: string };
-}) {
+async function HomePage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
   const currentDate = new Date();
-  const { month, year } = await searchParams;
-  const parsedMonth = month !== undefined ? Number(month) : NaN;
-  const parsedYear = year !== undefined ? Number(year) : NaN;
+  const parsedMonth = params.month ? Number(params.month) : NaN;
+  const parsedYear = params.year ? Number(params.year) : NaN;
+
   const safeMonth =
     Number.isInteger(parsedMonth) && parsedMonth >= 0 && parsedMonth <= 11
       ? parsedMonth
       : currentDate.getMonth();
+
   const safeYear = Number.isInteger(parsedYear)
     ? parsedYear
     : currentDate.getFullYear();
+
   const period: Period = { month: safeMonth, year: safeYear };
 
   return (

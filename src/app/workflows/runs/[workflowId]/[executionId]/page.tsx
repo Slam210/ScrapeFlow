@@ -4,6 +4,8 @@ import { Loader2Icon } from "lucide-react";
 import React, { Suspense } from "react";
 import ExecutionViewer from "./_components/ExecutionViewer";
 
+type SearchParams = Promise<{ executionId: string; workflowId: string }>;
+
 /**
  * Server component page that renders details for a workflow run.
  *
@@ -15,14 +17,7 @@ import ExecutionViewer from "./_components/ExecutionViewer";
  * @param params - A Promise that resolves to route parameters `{ executionId, workflowId }`.
  * @returns A JSX element containing the workflow run details page.
  */
-async function ExecutionViewerPage({
-  params,
-}: {
-  params: {
-    executionId: string;
-    workflowId: string;
-  };
-}) {
+async function ExecutionViewerPage({ params }: { params: SearchParams }) {
   const { executionId, workflowId } = await params;
 
   return (
