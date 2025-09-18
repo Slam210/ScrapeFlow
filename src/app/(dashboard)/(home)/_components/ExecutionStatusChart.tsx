@@ -39,6 +39,7 @@ const chartConfig = {
  *
  * @param data - Chart data series; each entry should include a date value under `data`
  *   (string | number | Date) and numeric counts for `success` and `failed`.
+ */
 export default function ExecutionStatusChart({ data }: { data: ChartData }) {
   return (
     <Card>
